@@ -4,7 +4,7 @@
 <head>
 <title>eForms</title>
 
-<link rel="stylesheet" href="<?=base_url() ?>static/css/screen.css"/>
+<link rel="stylesheet" href="<?= base_url(); ?>static/css/screen.css"/>
 
 </head>
 <body>
@@ -20,7 +20,7 @@
 
             <?php if($this->session->userdata('admin')): ?>
             <?= anchor('admin/create', 'Create Form', 'title="Create a form"'); ?>
-            <? endif ?>
+            <?php endif ?>
         </div>
         <div class="right">
             <form action="" method="get">
