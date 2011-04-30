@@ -1,30 +1,11 @@
 <?php
 
-class Form {
-	var $id;
-	var $name;
-	var $description;
-	var $user;
-	var $disabled;
-	var $fields;
-}
-
-class Field {
-	var $id;
-	var $name;
-	var $type;
-	var $options;
-	var $required;
-	var $description;
-	var $value;
-}
-
-class FormModel extends CI_Model {
-	var $a;
-	
+class FormModel extends CI_Model {	
 	function __constuct()
-	{
+	{	
 		parent::__construct();
+		
+		$this->load->library('forms');
 	}
 	
 	function createForm($name, $description, $user, $fields)
@@ -36,7 +17,7 @@ class FormModel extends CI_Model {
 					'user' => $user
 					);
 		$this->db->insert('Forms', $formData);
-		$form_id = insert_id();
+		$form_id = $this->db->insert_id();
 		
 		// insert $field info
 		$order = 0;
@@ -58,10 +39,11 @@ class FormModel extends CI_Model {
 		return $form_id;
 	}
 	
-	function getForm($id)
+	// return value: Form object with form structure info
+	function getForm($form_id)
 	{
 		// get form info
-		$this->db->from('Forms')->where('form_id',$id)->limit(1);
+		$this->db->from('Forms')->where('form_id',$form_id)->limit(1);
 		$query = $this->db->get();
 		
 		if ($query->num_rows() == 0)
@@ -72,14 +54,14 @@ class FormModel extends CI_Model {
 		$row = $query->row();
 		
 		$form = new Form();
-		$form->id = $id;
+		$form->id = $form_id;
 		$form->name = $row->form_name;
 		$form->description = $row->form_description;
 		$form->user = $row->user;
 		$form->disabled = $row->disabled;
 
 		// get fields info
-		$this->db->form('Fields')->where('form_id',$id)->order_by('order','asc');
+		$this->db->from('Fields')->where('form_id',$form_id)->order_by('order','asc');
 		$query = $this->db->get();
 		
 		if ($query->num_rows() > 0)
@@ -91,7 +73,7 @@ class FormModel extends CI_Model {
 				$field->id = $row->field_id;
 				$field->name = $row->field_name;
 				$field->type = $row->field_type;
-				$field->options = $row->field_options;
+				$field->options->setOptions($row->field_options);
 				$field->required = $row->field_required;
 				$field->description = $row->field_description;
 				
@@ -103,12 +85,56 @@ class FormModel extends CI_Model {
 		return $form;
 	}
 	
-	function addFilledForm($id, $values)
+	// precondition: form_id = form id
+	//               values = array of field_name => value pairs
+	// postcontidion: form instance added to database
+	// return value: instance_id
+	function addFilledForm($form_id, $user, $values)
 	{
-		// insert form
-		$instance_id = insert_id();
+		// insert form instance
+		$instanceData = array(
+					'form_id' => $form_id,
+					'user' => $user,
+					'time' => time()
+					);
+		$this->db->insert('Field', $instanceData);
+		
+		$instance_id = $this->db->insert_id();
+		
+		// get field information from form
+		$this->db->from('Fields')->where('form_id',$form_id);
+		$query = $this->db->get();
+		$fieldIDMap = array();
+		foreach ($query->result() as $row)
+		{
+			// NOTE: reverse array?
+			$fieldIDMap[$row->field_name] = $row->field_id;
+		}
+	
+		foreach ($values as $field => $value)
+		{
+			if (!array_key_exists($field, $fieldIDMap))
+			{
+				continue;
+			}
+		
+			$fieldData = array(
+						'field_id' => $fieldIDMap[$field],
+						'instance_id' => $instance_id,
+						'value' => $value
+						);
+			$this->db->insert('Field', $fieldData);
+		}
 		
 		return $instance_id;
+	}
+	
+	function getFilledForm($instance_id)
+	{
+		/*
+		$this->db->form('Filled_Forms')->join('Forms', 'Forms.form_id = Filled_Forms.form_id')->join('Fields', 'Fields.form_id = Forms.form_id')->join('Filled_Values')->where('Fields.field_id = Filled_Values.field_id AND Filled_Forms.instance_id = Filled_Values.instance_id');
+		*/
+		return false;
 	}
 	
 }
