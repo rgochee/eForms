@@ -1,12 +1,14 @@
 
 <style type="text/css">
 .field { border-bottom: 1px solid #bbb; padding: 5px 5px 8px; margin-top: 10px; background-color: #F0F0F0; }
-.delete_option { display: inline-block; margin-left: 5px; color: #FF5C00; font-weight: bold; padding: 1px 2px; }
-input, select { margin-bottom: 3px; }
+.field input, .field select { margin-bottom: 3px; }
+.field input[type=text], .field textarea { width: 400px; }
+
 .options { display: none; }
+.delete_option { display: inline-block; margin-left: 5px; color: #FF5C00; font-weight: bold; padding: 1px 2px; }
 .add_option { color: #A6A500; }
-#name { height: 25px; padding: 2px; }
-textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; }
+#name { height: 22px; padding: 2px; }
+textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 </style>
 
 <form id="create_form" method="post">
@@ -27,7 +29,7 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; }
 		<input id="name" type="text" name="name" size="50" />
 		
 		<label class="field_label"  for="description">Form Description</label>
-		<textarea id="description" name="description" cols="50" rows="2"></textarea>
+		<textarea id="description" name="description" cols="50"></textarea>
 	</div>
 
 <?php foreach($fields as $i => $field): ?>
@@ -35,11 +37,8 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; }
 		<label class="field_label" for="name<?= $i ?>">Field Name</label>
 		<input id="name<?= $i ?>" type="text" name="fields[<?= $i ?>][name]" value="<?= $field['name'] ?>" size="50" />
 		
-		<input  id="required<?= $i ?>" type="checkbox" name="fields[<?= $i ?>][required]" />
-		<label for="required<?= $i ?>">This field is required.</label>
-		
 		<label class="field_label" for="description<?= $i ?>">Help Text</label>
-		<textarea id="description<?= $i ?>" name="fields[<?= $i ?>][description]" value="<?= $field['description'] ?>" rows="2" cols="35"></textarea>
+		<textarea id="description<?= $i ?>" name="fields[<?= $i ?>][description]" value="<?= $field['description'] ?>" rows="3" cols="35"></textarea>
 		
 		<label class="field_label" for="type<?= $i ?>">Type</label>
 		<select id="type<?= $i ?>"  class="type_select" name="fields[<?= $i ?>][type]" value="<?= $field['type'] ?>">
@@ -51,6 +50,9 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; }
 			<?php endif ?>
 		<?php endforeach ?>
 		</select>
+		
+		<input  id="required<?= $i ?>" type="checkbox" name="fields[<?= $i ?>][required]" />
+		<label for="required<?= $i ?>">This field is required.</label>
 		
 		<ul class="options">
 			<?php 
@@ -82,11 +84,8 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; }
 		<label class="field_label" for="name{{index}}">Field Name</label>
 		<input id="name{{index}}" type="text" name="fields[{{index}}][name]" size="30" />
 		
-		<input id="required{{index}}" type="checkbox" name="fields[{{index}}][required]" />
-		<label for="required{{index}}">This field is required.</label>
-		
 		<label class="field_label" for="description{{index}}">Help Text</label>
-		<textarea id="description{{index}}" name="fields[{{index}}][description]" cols="35" rows="2"></textarea>
+		<textarea id="description{{index}}" name="fields[{{index}}][description]" cols="35" rows="3"></textarea>
 		
 		<label class="field_label" for="type{{index}}">Type</label>
 		<select id="type{{index}}" class="type_select" name="fields[{{index}}][type]">
@@ -94,6 +93,9 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; }
 			<option value="<?= $val ?>"><?= $text ?></option>
 		<?php endforeach ?>
 		</select>
+		
+		<input id="required{{index}}" type="checkbox" name="fields[{{index}}][required]" />
+		<label for="required{{index}}">This field is required.</label>
 		
 		<ul class="options">
 			<li>

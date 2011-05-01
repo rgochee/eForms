@@ -4,7 +4,6 @@ class Admin extends CI_Controller {
 
 	public function __construct() {
 		parent::__construct();
-		$this->load->library('FormsDB');
 		$this->load->library('session');
 		$this->load->helper('url');
 		$this->load->model('form');
@@ -53,6 +52,7 @@ class Admin extends CI_Controller {
 				$fields[] = $field;
 			}
 			//Use createForm to add the form to the database
+			$this->load->library('FormsDB');
 			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
 			
 			//what view to show after form is added?
@@ -75,6 +75,12 @@ class Admin extends CI_Controller {
 		else if($admin === "user")
 			$this->session->unset_userdata('admin');
 		redirect(base_url() . $this->input->get('next', TRUE));
+	}
+	
+	public function dbcheck() 
+	{
+		$this->load->library('FormsDB');
+		echo "Connected to db!" . PHP_EOL;
 	}
 }
 
