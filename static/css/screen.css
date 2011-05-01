@@ -2,6 +2,7 @@
 body, div, h1, h2, h3, h4, ul, li { margin: 0; padding: 0; border: 0; font-size: 12px; }
 body { font-family: Verdana, Helvetica, Arial, sans-serif; }
 a { text-decoration: none; color: inherit; }
+a:hover { text-decoration: underline; }
 #header, #content, #footer { width: 100%; }
 #header { height: 50px; background-color: #2E3884; }
 #logo { font-family: Georgia, Times, serif; font-size: 30px; padding: 8px 10px; color: #717DD7; display: inline-block;

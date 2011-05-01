@@ -4,7 +4,7 @@
 <head>
 <title>eForms</title>
 
-<link rel="stylesheet" href="<?= base_url(); ?>static/css/screen.css"/>
+<link rel="stylesheet" href="<?= base_url() ?>static/css/screen.css"/>
 
 </head>
 <body>
@@ -16,10 +16,10 @@
 <div id="content">
     <div id="toolbar">
         <div id="menubar" class="left">
-            <?= anchor('', 'Browse Forms', 'title="Browse all of the forms"'); ?>
+            <?= anchor('', 'Browse Forms', 'title="Browse all of the forms"') ?>
 
             <?php if($this->session->userdata('admin')): ?>
-            <?= anchor('admin/create', 'Create Form', 'title="Create a form"'); ?>
+            <?= anchor('admin/create', 'Create Form', 'title="Create a form"') ?>
             <?php endif ?>
         </div>
         <div class="right">
