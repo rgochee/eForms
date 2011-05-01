@@ -7,7 +7,7 @@ class Admin extends CI_Controller {
 		$this->load->library('FormsDB');
 		$this->load->library('session');
 		$this->load->helper('url');
-		$this->load->model('forms');
+		$this->load->model('form');
 	}
 	
 	public function index()
