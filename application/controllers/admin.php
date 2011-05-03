@@ -47,7 +47,8 @@ class Admin extends CI_Controller {
 						//Reject option as invalid
 					}
 				}
-				$field->options = implode(OPT_SEPARATOR, $fieldAttributes['options']);
+				fOptions = new FieldOptions($fieldAttributes['options']);
+				$field->options = fOptions.getSerialized();
 				$field->required = isset($fieldAttributes['required']);
 				$field->description = $fieldAttributes['description'];
 				$fields[] = $field;
