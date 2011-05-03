@@ -1,3 +1,3 @@
 
 <p>You've successfully created a form! </p>
-<p>Click here to view the form. Click here to edit it.</p>
+<p>Click <?=anchor('forms/fill/'.$form_id, 'here')?> to view the form. Click <?=anchor('admin/edit/'.$form_id, 'here')?> to edit it.</p>

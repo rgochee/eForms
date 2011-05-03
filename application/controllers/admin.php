@@ -5,6 +5,7 @@ class Admin extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('session');
+		$this->load->helper('text');
 		$this->load->helper('url');
 		$this->load->model('form');
 	}
@@ -20,7 +21,7 @@ class Admin extends CI_Controller {
 		$requestType = $this->input->server('REQUEST_METHOD');
 		if ($requestType == 'GET')	//If get request, creating new form
 		{
-			$this->load->view('header');
+			$this->load->view('header', array('title'=>'- Create Form'));
 			$this->load->view('create_form');
 			$this->load->view('footer');
 		}
@@ -56,8 +57,8 @@ class Admin extends CI_Controller {
 			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
 			
 			//what view to show after form is added?
-			$this->load->view('header');
-			$this->load->view('create_success', $name);
+			$this->load->view('header', array('title'=>'- Create Success!'));
+			$this->load->view('create_success', array('form_name'=>$name, 'form_id'=>$form_id));
 			$this->load->view('footer');
 		}
 	}

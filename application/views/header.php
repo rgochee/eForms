@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>eForms</title>
+<title>eForms <?=tryPrint($title)?></title>
 
 <link rel="stylesheet" href="<?= base_url() ?>static/css/screen.css"/>
 
@@ -16,10 +16,11 @@
 <div id="content">
     <div id="toolbar">
         <div id="menubar" class="left">
-            <?= anchor('', 'Browse Forms', 'title="Browse all of the forms"') ?>
+            <?= anchor('', 'Home', 'title="Home page"') ?>
+            <?= anchor('forms/browse', 'Browse', 'title="Browse all of the forms"') ?>
 
             <?php if($this->session->userdata('admin')): ?>
-            <?= anchor('admin/create', 'Create Form', 'title="Create a form"') ?>
+            <?= anchor('admin/create', 'Create', 'title="Create a form"') ?>
             <?php endif ?>
         </div>
         <div class="right">
