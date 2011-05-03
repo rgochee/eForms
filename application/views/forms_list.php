@@ -3,6 +3,6 @@
 
 <ul id="forms_list">
 <?php foreach($forms as $form): ?>
-	<li class="form"><?=anchor('forms/fill/'.$form->form_id, $form->form_name)?></li>
+	<li class="form"><?=anchor('forms/fill/'.$form->id, $form->name)?></li>
 <?php endforeach ?>
 </ul>

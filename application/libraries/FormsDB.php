@@ -87,6 +87,37 @@ class FormsDB {
 		return $form;
 	}
 	
+	// return value: array of Form objects without form structure info
+	function getForms($limit = 20, $start = 0)
+	{
+		// get form info
+		$this->CI->db->from('Forms')->limit($start, $limit);
+		$query = $this->CI->db->get();
+		
+		if ($query->num_rows() == 0)
+		{
+			return false;
+		}
+		
+		$return = array();
+		
+		foreach ($query->result() as $row)
+		{
+		
+			$form = new Form();
+			$form->id = $row->form_id;
+			$form->name = $row->form_name;
+			$form->description = $row->form_description;
+			$form->user = $row->user;
+			$form->disabled = $row->disabled;
+			$form->fields = NULL;
+			
+			$return[] = $form;
+		}
+		
+		return $return;
+	}
+	
 	// precondition: form_id = form id
 	//               values = array of field_name => value pairs
 	// postcontidion: form instance added to database

@@ -17,9 +17,8 @@ class Forms extends CI_Controller {
 	
 	public function browse()
 	{
-		$this->load->database();
-		$forms = $this->db->get('forms');
-		$data['forms'] = $forms->result();
+		$this->load->library('FormsDB');
+		$data = $this->formsdb->getForms();
 		$this->load->view('header');
 		$this->load->view('forms_list', $data);
 		$this->load->view('footer');
