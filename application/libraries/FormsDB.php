@@ -8,6 +8,7 @@ class FormsDB {
 	{
 		$this->CI =& get_instance();
 		$this->CI->load->database();
+		$this->CI->load->model('form');
 	}
 	
 	function createForm($name, $description, $user, $fields)
@@ -60,10 +61,10 @@ class FormsDB {
 		$form->name = $row->form_name;
 		$form->description = $row->form_description;
 		$form->user = $row->user;
-		$form->disabled = $row->disabled;
+		$form->disabled = $row->form_disabled;
 
 		// get fields info
-		$this->CI->db->from('Fields')->where('form_id',$form_id)->order_by('order','asc');
+		$this->CI->db->from('Fields')->where('form_id',$form_id)->order_by('field_order','asc');
 		$query = $this->CI->db->get();
 		
 		if ($query->num_rows() > 0)
@@ -75,7 +76,7 @@ class FormsDB {
 				$field->id = $row->field_id;
 				$field->name = $row->field_name;
 				$field->type = $row->field_type;
-				$field->options->setOptions($row->field_options);
+				$field->options = new FieldOptions($row->field_options);
 				$field->required = $row->field_required;
 				$field->description = $row->field_description;
 				
@@ -91,25 +92,25 @@ class FormsDB {
 	function getForms($limit = 20, $start = 0)
 	{
 		// get form info
-		$this->CI->db->from('Forms')->limit($start, $limit);
+		$this->CI->db->from('Forms')->limit($limit, $start);
+		// note: may want to use `form_disabled` as applicable
 		$query = $this->CI->db->get();
 		
-		if ($query->num_rows() == 0)
+		if ($query->num_rows() === 0)
 		{
 			return false;
 		}
 		
 		$return = array();
-		
+
 		foreach ($query->result() as $row)
 		{
-		
 			$form = new Form();
 			$form->id = $row->form_id;
 			$form->name = $row->form_name;
 			$form->description = $row->form_description;
 			$form->user = $row->user;
-			$form->disabled = $row->disabled;
+			$form->disabled = $row->form_disabled;
 			$form->fields = NULL;
 			
 			$return[] = $form;
