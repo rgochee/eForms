@@ -24,35 +24,35 @@ class Field {
 class FieldOptions {
 	private $options;
 
-	public function __constuct($data = NULL)
+	public function __construct($data = NULL)
 	{
 		if ($data)
 		{
-			setOptions($data);
+			$this->setOptions($data);
 		}
 		else
 		{
-			$options = array();
+			$this->options = array();
 		}
 	}
 	public function __toString()
 	{
-		return getSerialized();
+		return $this->getSerialized();
 	}
 	
 	public function addOption($opt)
 	{
-		if (!in_array($opt, $options))
+		if (!in_array($opt, $this->options))
 		{
-			$options[] = $opt;
+			$this->options[] = $opt;
 		}
 	}
 	public function removeOption($opt)
 	{
-		$key = array_search($opt, $options);
+		$key = array_search($opt, $this->options);
 		if ($key !== NULL)
 		{
-			unset($options[$key]);
+			unset($this->options[$key]);
 		}
 	}
 	public function setOptions($data)
@@ -60,7 +60,7 @@ class FieldOptions {
 		if (is_array($data))
 		{
 			// NOTE: may want to validate data format?
-			$options = $data;
+			$this->options = $data;
 		}
 		else
 		{
@@ -68,17 +68,17 @@ class FieldOptions {
 			$data = (string) $data;
 			
 			// split by separator
-			$options = explode(OPT_SEPARATOR, $data);
+			$this->options = explode(OPT_SEPARATOR, $data);
 		}
-		$options = array_unique($options);
+		$this->options = array_unique($this->options);
 	}
 	public function getOptions()
 	{
-		return $options;
+		return $this->options;
 	}
 	public function getSerialized()
 	{
-		return implode(OPT_SEPARATOR, $options);
+		return implode(OPT_SEPARATOR, $this->options);
 	}
 	
 	public static function serialize($data)

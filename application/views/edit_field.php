@@ -18,8 +18,9 @@
 	
 	<label class="field_label" for="type<?=$field_id?>">Type</label>
 	<select id="type<?=$field_id?>"  class="type_select" name="fields[<?=$field_id?>][type]">
+	<?php $field_type = returnWithDefault($field['type'], "text") ?>
 	<?php foreach ($types as $val=>$text): ?>
-	<?php if (isset($field['type']) && $field['type'] === $val): ?>
+	<?php if ($field_type === $val): ?>
 		<option value="<?=$val?>" selected="selected"><?=$text?></option>
 	<?php else: ?>
 		<option value="<?=$val?>"><?=$text?></option>
