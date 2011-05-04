@@ -47,17 +47,16 @@ class Admin extends CI_Controller {
 						//Reject option as invalid
 					}
 				}
-				fOptions = new FieldOptions($fieldAttributes['options']);
-				$field->options = fOptions.getSerialized();
+				$fOptions = new FieldOptions($fieldAttributes['options']);
+				$field->options = $fOptions->getSerialized();
 				$field->required = isset($fieldAttributes['required']);
 				$field->description = $fieldAttributes['description'];
 				$fields[] = $field;
 			}
 			//Use createForm to add the form to the database
-			$this->load->library('FormsDB');
+			$this->load->library('formsdb');
 			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
 			
-			//what view to show after form is added?
 			$this->load->view('header', array('title'=>'- Create Success!'));
 			$this->load->view('create_success', array('form_name'=>$name, 'form_id'=>$form_id));
 			$this->load->view('footer');
@@ -81,7 +80,7 @@ class Admin extends CI_Controller {
 	
 	public function dbcheck() 
 	{
-		$this->load->library('FormsDB');
+		$this->load->library('formsdb');
 		echo "Connected to db!" . PHP_EOL;
 	}
 }
