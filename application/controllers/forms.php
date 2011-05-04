@@ -34,6 +34,7 @@ class Forms extends CI_Controller {
 			$form = $this->formsdb->getForm($form_id);
 			$this->load->view('header', array('title'=>$form->name));
 			//Load the view which Avi creates
+			$this->load->view('fill_form', array('form'=>$form));
 			$this->load->view('footer');
 		}
 		else if ($requestType == 'POST') //Else if post request, adding filled form data
