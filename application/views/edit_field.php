@@ -1,9 +1,9 @@
 <?php
 	$types = array(
-		"text" => "Text",
+		"textbox" => "Text",
 		"checkbox" => "Checkboxes",
 		"radio" => "Radio",
-		"list" => "Dropdown list"
+		"dropdown" => "Dropdown list"
 	);
 ?>
 <li id="field#<?=$field_id?>" class="field">

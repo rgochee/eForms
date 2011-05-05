@@ -76,13 +76,13 @@ $(document).ready(function() {
 			dummy = "";
 		
 		switch(type) {
-			case "text": 
+			case "textbox": 
 				$(this).siblings('.options').hide();
 			break;
-			case "list":
+			case "dropdown":
 			case "checkbox":
 			case "radio":
-				if(type === "list")
+				if(type === "dropdown")
 					dummy = '';
 				else
 					dummy = '<input class="dummy" type="'+type+'" />';
