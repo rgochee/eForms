@@ -1,3 +1,3 @@
 <pre><?php print_r($form); ?></pre>
 
-		<?php echo ($form->name) ?>
+		<?php echo ('forms/fill/'.$form->name) ?>
