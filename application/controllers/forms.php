@@ -17,7 +17,7 @@ class Forms extends CI_Controller {
 	
 	public function browse()
 	{
-		$this->load->library('formsdb');
+		$this->load->library('FormsDB');
 		$data = array('forms' => $this->formsdb->getForms());
 		$this->load->view('header', array('title'=>'- Browse Forms'));
 		$this->load->view('forms_list', $data);
@@ -26,7 +26,7 @@ class Forms extends CI_Controller {
 	
 	public function fill($form_id)
 	{
-		$this->load->library('formsdb');
+		$this->load->library('FormsDB');
 		
 		$requestType = $this->input->server('REQUEST_METHOD');
 		if ($requestType == 'GET') //If get request, ready to fill out the form

@@ -13,7 +13,6 @@ class Admin extends CI_Controller {
 	public function index()
 	{
 		$this->load->view('header');
-		echo '<p>Welcome to the eForms center</p>';
 		$this->load->view('footer');
 	}
 	
@@ -55,7 +54,7 @@ class Admin extends CI_Controller {
 				$fields[] = $field;
 			}
 			//Use createForm to add the form to the database
-			$this->load->library('formsdb');
+			$this->load->library('FormsDB');
 			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
 			
 			$this->load->view('header', array('title'=>'- Success!'));
@@ -114,7 +113,7 @@ class Admin extends CI_Controller {
 	
 	public function dbcheck() 
 	{
-		$this->load->library('formsdb');
+		$this->load->library('FormsDB');
 		echo "Connected to db!" . PHP_EOL;
 	}
 }

@@ -7,6 +7,7 @@
 <?php foreach ($form->fields as $field): ?>
 <div class="field">
 	<label for="fields<?php echo $field->id; ?>" class="field_label<?php if ($field->required) { echo ' field_required'; } ?>"><?php echo $field->name; ?></label>
+	<span class="field_help"><?php echo $field->description; ?></span>
 	<?php if ($field->type=="checkbox"): ?>
 		<?php foreach ($field->options->getOptions() as $option): ?>
 			<div class="subfield">
