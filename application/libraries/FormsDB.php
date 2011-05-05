@@ -134,30 +134,15 @@ class FormsDB {
 		$this->CI->db->insert('Fields', $instanceData);
 		
 		$instance_id = $this->CI->db->insert_id();
-		
-		// get field information from form
-		$this->CI->db->from('Fields')->where('form_id',$form_id);
-		$query = $this->CI->db->get();
-		$fieldIDMap = array();
-		foreach ($query->result() as $row)
+
+		foreach ($values as $field_id => $value)
 		{
-			// NOTE: reverse array?
-			$fieldIDMap[$row->field_name] = $row->field_id;
-		}
-	
-		foreach ($values as $field => $value)
-		{
-			if (!array_key_exists($field, $fieldIDMap))
-			{
-				continue;
-			}
-		
 			$fieldData = array(
-						'field_id' => $fieldIDMap[$field],
+						'field_id' => $field_id,
 						'instance_id' => $instance_id,
 						'value' => $value
 						);
-			$this->CI->db->insert('Fields', $fieldData);
+			$this->CI->db->insert('Filled_Values', $fieldData);
 		}
 		
 		return $instance_id;
