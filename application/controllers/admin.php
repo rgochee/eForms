@@ -93,7 +93,7 @@ class Admin extends CI_Controller {
 			foreach ($subquery->result() as $filled_field)
 			{
 				$field_name = $fields[$filled_field->field_id];
-				$response[$field_name] = $filled_field->value;
+				$response[$field_name] = str_replace(OPT_SEPARATOR, ', ', $filled_field->value);
 			}
 			array_push($responses, $response);
 		}

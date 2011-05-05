@@ -9,15 +9,17 @@
 	<label for="fields<?php echo $field->id; ?>" class="field_label<?php if ($field->required) { echo ' field_required'; } ?>"><?php echo $field->name; ?></label>
 	<span class="field_help"><?php echo $field->description; ?></span>
 	<?php if ($field->type=="checkbox"): ?>
-		<?php foreach ($field->options->getOptions() as $option): ?>
+		<?php foreach ($field->options->getOptions() as $option_id=>$option): ?>
 			<div class="subfield">
-			<input id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>][]" type="checkbox" value="<?php echo $option; ?>" /> <?php echo $option; ?>
+			<input id="fields<?php echo $field->id."-".$option_id; ?>" name="fields[<?php echo $field->id; ?>][]" type="checkbox" value="<?php echo $option; ?>" />
+			<label for="fields<?php echo $field->id."-".$option_id; ?>"><?php echo $option; ?></label>
 			</div>
 		<?php endforeach ?>
 	<?php elseif ($field->type=="radio"): ?>
-		<?php foreach ($field->options->getOptions() as $option): ?>
+		<?php foreach ($field->options->getOptions() as $option_id=>$option): ?>
 			<div class="subfield">
-			<input id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]" type="radio" value="<?php echo $option; ?>" /> <?php echo $option; ?>
+			<input id="fields<?php echo $field->id."-".$option_id; ?>" name="fields[<?php echo $field->id; ?>]" type="radio" value="<?php echo $option; ?>" /> 
+			<label for="fields<?php echo $field->id."-".$option_id; ?>"><?php echo $option; ?></label>
 			</div>
 		<?php endforeach ?>
 	<?php elseif ($field->type=="dropdown"): ?>
