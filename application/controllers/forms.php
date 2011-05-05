@@ -32,23 +32,23 @@ class Forms extends CI_Controller {
 		if ($requestType == 'GET') //If get request, ready to fill out the form
 		{
 			$form = $this->formsdb->getForm($form_id);
-			$this->load->view('header', array('title'=>$form->name));
-			//Load the view which Avi creates
+			$this->load->view('header', array('-'.'title'=>$form->name));
+			$this->load->view('fill_form', array('form'=>$form));
 			$this->load->view('footer');
 		}
 		else if ($requestType == 'POST') //Else if post request, adding filled form data
 		{
 			$form = $this->formsdb->getForm($form_id);
+			$user = $this->input->post('user');
 			$values = $this->input->post('fields');
-			foreach($values as $name => $value)
+			foreach($values as $fid => $value)
 			{
 				//Do answer validation here
 			}
-			$this->formsdb->addFilledForm($form->id, $form->user, $values);
+			$instanceid = $this->formsdb->addFilledForm($form->id, $user, $values);
 			
-			$data = array('forms' => $this->formsdb->getForms());
-			$this->load->view('header');
-			$this->load->view('forms_list', $data);
+			$this->load->view('header', array('title'=>'- Success!'));
+			$this->load->view('fill_success');
 			$this->load->view('footer');
 		}
 	}
