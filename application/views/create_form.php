@@ -20,7 +20,7 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 		<input id="name" type="text" name="name" size="50" />
 		
 		<label class="field_label"  for="description">Form Description</label>
-		<textarea id="description" name="description" cols="50"></textarea>
+		<textarea id="description" name="description" cols="50" value=""></textarea>
 		
 		<input id="form_id" type="hidden" name="form_id" />
 	</div>

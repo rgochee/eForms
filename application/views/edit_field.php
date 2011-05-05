@@ -12,9 +12,7 @@
 	<a class="delete_field" href="#">Delete Field</a>
 	
 	<label class="field_label" for="description<?=$field_id?>">Help Text</label>
-	<textarea id="description<?=$field_id?>" name="fields[<?=$field_id?>][description]" rows="3" cols="35">
-	<?=tryPrint($field['description'])?>
-	</textarea>
+	<textarea id="description<?=$field_id?>" name="fields[<?=$field_id?>][description]" rows="3" cols="35"><?=tryPrint($field['description'])?></textarea>
 	
 	<label class="field_label" for="type<?=$field_id?>">Type</label>
 	<select id="type<?=$field_id?>"  class="type_select" name="fields[<?=$field_id?>][type]">

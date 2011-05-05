@@ -6,7 +6,7 @@ table, th, td { border: 1px solid #bbb; }
 #nodata { text-align: center; }
 </style>
 
-<h2><?php echo $form_name; ?> Data</h2>
+<h2>"<?php echo $form_name; ?>" Data</h2>
 
 <table cellspacing="0">
 	<tr>
@@ -20,7 +20,7 @@ table, th, td { border: 1px solid #bbb; }
 	<?php foreach ($data as $row): ?>
 	<tr>
 		<?php foreach ($fields as $field_name): ?>
-		<td><?php echo $row[$field_name]; ?></td>
+		<td><?php echo tryPrint($row[$field_name], '&nbsp;'); ?></td>
 		<?php endforeach ?>
 		
 	</tr>

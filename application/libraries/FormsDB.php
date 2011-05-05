@@ -131,7 +131,7 @@ class FormsDB {
 					'user' => $user,
 					'time' => time()
 					);
-		$this->CI->db->insert('Fields', $instanceData);
+		$this->CI->db->insert('Filled_Forms', $instanceData);
 		
 		$instance_id = $this->CI->db->insert_id();
 

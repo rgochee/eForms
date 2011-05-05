@@ -58,7 +58,7 @@ class Admin extends CI_Controller {
 			$this->load->library('formsdb');
 			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
 			
-			$this->load->view('header', array('title'=>'- Create Success!'));
+			$this->load->view('header', array('title'=>'- Success!'));
 			$this->load->view('create_success', array('form_name'=>$name, 'form_id'=>$form_id));
 			$this->load->view('footer');
 		}

@@ -32,7 +32,7 @@ class Forms extends CI_Controller {
 		if ($requestType == 'GET') //If get request, ready to fill out the form
 		{
 			$form = $this->formsdb->getForm($form_id);
-			$this->load->view('header', array('-'.'title'=>$form->name));
+			$this->load->view('header', array('title'=>'- '.$form->name));
 			$this->load->view('fill_form', array('form'=>$form));
 			$this->load->view('footer');
 		}
