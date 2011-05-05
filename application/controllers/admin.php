@@ -13,6 +13,7 @@ class Admin extends CI_Controller {
 	public function index()
 	{
 		$this->load->view('header');
+		echo '<p>Welcome to the eForms center</p>';
 		$this->load->view('footer');
 	}
 	
@@ -63,17 +64,50 @@ class Admin extends CI_Controller {
 		}
 	}
 	
-	public function data($id)
+	public function data($form_id)
 	{
 		$this->load->view('header');
+		
+		$this->load->database();
+		
+		$this->db->from('Forms')->where('form_id',$form_id);
+		$form = $this->db->get()->row();
+		$form_name = $form->form_name;
+		
+		
+		$this->db->from('Fields')->where('form_id',$form_id)->order_by('field_order','asc');
+		$query = $this->db->get();
+		$fields = array();
+		foreach ($query->result() as $field)
+		{
+			$fields[$field->field_id] = $field->field_name;
+		}
+		
+		$this->db->from('Filled_Forms')->where('form_id',$form_id);
+		$query = $this->db->get();
+		$responses = array();
+		foreach ($query->result() as $row) 
+		{
+			$this->db->from('Filled_Values')->where('instance_id', $row->instance_id);
+			$subquery = $this->db->get();
+			$response = array();
+			foreach ($subquery->result() as $filled_field)
+			{
+				$field_name = $fields[$filled_field->field_id];
+				$response[$field_name] = $filled_field->value;
+			}
+			array_push($responses, $response);
+		}
+		
+		$this->load->view('form_data', array('form_name'=>$form_name, 'fields'=>$fields, 'data'=>$responses));
 		$this->load->view('footer');
 	}
 	
 	public function changeMode($admin)
 	{
-		if($admin === "admin")
+		if ($admin === "admin")
 			$this->session->set_userdata('admin', true);
-		else if($admin === "user")
+		else if ($admin === "user")
 			$this->session->unset_userdata('admin');
 		redirect(base_url() . $this->input->get('next', TRUE));
 	}

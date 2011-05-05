@@ -32,7 +32,12 @@ class Forms extends CI_Controller {
 		if ($requestType == 'GET') //If get request, ready to fill out the form
 		{
 			$form = $this->formsdb->getForm($form_id);
+<<<<<<< HEAD
 			$this->load->view('header', array('-'.'title'=>$form->name));
+=======
+			$this->load->view('header', array('title'=>$form->name));
+			//Load the view which Avi creates
+>>>>>>> 14251996e6b56f9461b10dad990537ba1a17f695
 			$this->load->view('fill_form', array('form'=>$form));
 			$this->load->view('footer');
 		}
