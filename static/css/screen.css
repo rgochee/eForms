@@ -28,6 +28,7 @@ body { font-family: Verdana, Helvetica, Arial, sans-serif; }
 h2 { font-size: 25px; font-family: Georgia, Times, serif;  font-variant: small-caps; margin: 15px 0 10px; }
 .field { margin: 25px 0 10px; }
 .field_label { display: block; font-weight: bold; }
+.field_required { display: block; font-weight: bold; color:#F00; text-decoration: underline }
 .error_list { color: #FF5C00; list-style: none; display: inline-block; vertical-align: top; clear: right; }
 .options { list-style: none; }
 .options li { padding: 2px; }
