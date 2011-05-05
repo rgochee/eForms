@@ -44,6 +44,12 @@ class Forms extends CI_Controller {
 			foreach($values as $fid => $value)
 			{
 				//Do answer validation here
+				
+				if (is_array($value))
+				{
+					$fOptions = new FieldOptions($value);
+					$values[$fid] = $fOptions->getSerialized();
+				}
 			}
 			$instanceid = $this->formsdb->addFilledForm($form->id, $user, $values);
 			

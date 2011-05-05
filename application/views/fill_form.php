@@ -11,7 +11,7 @@
 	<?php if ($field->type=="checkbox"): ?>
 		<?php foreach ($field->options->getOptions() as $option): ?>
 			<div class="subfield">
-			<input id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]" type="checkbox" value="<?php echo $option; ?>" /> <?php echo $option; ?>
+			<input id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>][]" type="checkbox" value="<?php echo $option; ?>" /> <?php echo $option; ?>
 			</div>
 		<?php endforeach ?>
 	<?php elseif ($field->type=="radio"): ?>
