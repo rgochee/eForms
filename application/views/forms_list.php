@@ -5,11 +5,13 @@
 <?php if (!empty($forms)): ?>
 <?php foreach($forms as $form): ?>
 	<li class="form">
-		<?php echo anchor('forms/fill/'.$form->id, $form->name); ?>
+		<?php $urlName = '/' . str_replace(' ', '-', strtolower($form->name)); ?>
+		<?php echo anchor('forms/fill/' . $form->id . $urlName, $form->name, 'title="Fill form"'); ?>
 		
 		<?php if($this->session->userdata('admin')): ?>
-		(<?php echo anchor('admin/data/'.$form->id, 'View data', 'title="View data"'); ?>)
+		(<?php echo anchor('admin/data/' . $form->id . $urlName, 'View data', 'title="View form responses"'); ?>)
 		<?php endif ?>
+		
 	</li>
 <?php endforeach ?>
 <?php else: ?>
