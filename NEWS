@@ -1,0 +1,17 @@
+
+* Changes in eForms 0.5
+
+** Bug Fixes
+	Creating and filling fields work for field types: textbox, checkbox, radio, dropdown list.
+
+** New Features
+	Added functionality for viewing form data
+	Added field help text
+
+* Changes in eForms 0.4
+
+** Bug Fixes
+	Created forms are actually saved on the database
+
+** New Features
+	Forms can be filled out

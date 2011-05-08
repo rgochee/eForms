@@ -11,7 +11,11 @@ class Forms extends CI_Controller {
 	
 	public function index()
 	{
-		$this->load->view('header');
+		$this->load->view('header', array('title'=>'- Index'));
+		$this->load->helper('file');
+		$newsFile = read_file('NEWS');
+		$newsItems = explode("\n* ", $newsFile);
+		$this->load->view('index', array('NEWS'=>$newsItems[1]));
 		$this->load->view('footer');
 	}
 	
