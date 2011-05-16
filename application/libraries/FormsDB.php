@@ -1,8 +1,11 @@
 <?php
 
-
 class FormsDB {
 	var $CI;
+	
+	const SORT_TIME = 0x1;
+	const SORT_NAME = 0x2;
+	const SHOW_DISABLED = 0x100;
 	
 	function __construct()
 	{
@@ -89,10 +92,26 @@ class FormsDB {
 	}
 	
 	// return value: array of Form objects without form structure info
-	function getForms($limit = 20, $start = 0)
+	function getForms($limit = 20, $start = 0, $options = 0)
 	{
 		// get form info
 		$this->CI->db->from('Forms')->limit($limit, $start);
+		
+		// handle options
+		if ($options & FormsDB::SORT_TIME)
+		{
+			$this->CI->db->order_by('time_created', 'desc');
+		}
+		elseif ($options & FormsDB::SORT_NAME)
+		{
+			$this->CI->db->order_by('form_name', 'asc');
+		}
+		
+		if ($options & FormsDB::show_disabled == 0)
+		{
+			$this->CI->db->where('form_disabled', 0);
+		}
+		
 		// note: may want to use `form_disabled` as applicable
 		$query = $this->CI->db->get();
 		
