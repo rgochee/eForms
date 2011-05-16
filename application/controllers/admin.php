@@ -16,25 +16,44 @@ class Admin extends CI_Controller {
 		$this->load->view('footer');
 	}
 	
+	public function _fieldTypeCheck($type) {
+		$this->load->model('form');
+		return FieldTypes::isValid($type);
+	}
+	
 	public function create()
 	{
+		$this->load->view('header', array('title'=>'- Create Form'));
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+
+		$this->form_validation->set_rules('name', 'Form name', 'required|trim');
+		$this->form_validation->set_rules('description', 'Form description', '');
+
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+	
 		$requestType = $this->input->server('REQUEST_METHOD');
 		if ($requestType == 'GET')	//If get request, creating new form
 		{
-			$this->load->view('header', array('title'=>'- Create Form'));
-			$this->load->view('create_form');
-			$this->load->view('footer');
+			$this->load->view('create_form', array('numFields'=>1));
 		}
 		else if ($requestType == 'POST')	//Else if post request, adding newly created form to database
 		{
+			$numFields = count($this->input->post('fields'));
+			
 			//Insert form attribute validation here?
 			$name = $this->input->post('name');
 			$description = $this->input->post('description');
 			$user = $this->input->post('user');
 			
 			$fields = array();
-			foreach ($this->input->post('fields') as $fieldAttributes)	//for each array of field info in the array of fields
+			foreach ($this->input->post('fields') as $i=>$fieldAttributes)	//for each array of field info in the array of fields
 			{
+				$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', '');
+				$this->form_validation->set_rules('fields['.$i.'][description]', 'help text', '');
+				$this->form_validation->set_rules('fields['.$i.'][type]', 'type', 'callback__fieldTypeCheck');
+				$this->form_validation->set_rules('fields['.$i.'][required]', 'field requirement', '');
+				$this->form_validation->set_rules('fields['.$i.'][options][]', 'field option', 'trim');
 				$field = new Field();
 				
 				//Some field attribute validation should be inserted for each attribute
@@ -56,11 +75,18 @@ class Admin extends CI_Controller {
 			//Use createForm to add the form to the database
 			$this->load->library('FormsDB');
 			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
+			if ($this->form_validation->run() == FALSE || !$form_id) 
+			{
+				$this->load->view('create_form', array('numFields'=>$numFields));
+				$this->load->view('footer');
+				return;
+			}
 			
 			$this->load->view('header', array('title'=>'- Success!'));
 			$this->load->view('create_success', array('form_name'=>$name, 'form_id'=>$form_id));
-			$this->load->view('footer');
 		}
+		
+		$this->load->view('footer');
 	}
 	
 	public function data($form_id)

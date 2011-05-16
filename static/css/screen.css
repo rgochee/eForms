@@ -31,7 +31,7 @@ h3 { font-size: 20px; font-family: Georgia, Times, serif; margin: 15px 0 10px; b
 .field_label { display: block; font-weight: bold; }
 .field_required { display: block; font-weight: bold; color:#F00; text-decoration: underline }
 .field_help { display: block; }
-.error_list { color: #FF5C00; list-style: none; display: inline-block; vertical-align: top; clear: right; }
+.error { color: #FF5C00; vertical-align: top; clear: right; }
 .options { list-style: none; }
 .options li { padding: 2px; }
 .dropdown { margin-top: 5px; }

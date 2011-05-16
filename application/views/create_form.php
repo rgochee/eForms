@@ -14,22 +14,22 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 
 <form id="create_form" method="post">
 <h2>Create Form</h2>
-
 	<div class="field">
 		<label class="field_label"  for="name">Form Name</label>
-		<input id="name" type="text" name="name" size="50" />
+		<?php echo form_error('name'); ?>
+		<input id="name" type="text" name="name" size="50" value="<?php echo set_value('name'); ?>" />
 		
 		<label class="field_label"  for="description">Form Description</label>
-		<textarea id="description" name="description" cols="50" value=""></textarea>
-		
-		<input id="form_id" type="hidden" name="form_id" />
+		<?php echo form_error('description'); ?>
+		<textarea id="description" name="description" cols="50"><?php echo set_value('description'); ?></textarea>
 	</div>
 
 	<ul id="fields">
 	<?php $fields = returnWithDefault($fields, array(array())); ?>
-	<?php foreach($fields as $i => $field): ?>
+	<?php for($i=0; $i<array_count('fields[]'); $i++):
+		$field = array(); ?>
 	<?php $this->load->view('edit_field', array('field_id'=>$i, 'field'=>$field)); ?>
-	<?php endforeach ?>
+	<?php endfor ?>
 	</ul>
 
 	<div id="form_btns" class="field">
