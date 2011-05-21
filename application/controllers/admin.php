@@ -9,97 +9,108 @@ class Admin extends CI_Controller {
 		$this->load->helper('url');
 		$this->load->model('form');
 	}
-	
+
 	public function index()
 	{
 		$this->load->view('header');
 		$this->load->view('footer');
 	}
-	
+
 	public function _fieldTypeCheck($type) {
 		$this->load->model('form');
 		return FieldTypes::isValid($type);
 	}
 	
+	public function _seperatorCheck($option)
+	{
+		return strstr($option, OPT_SEPARATOR);
+	}
+
 	public function create()
 	{
-		$this->load->view('header', array('title'=>'- Create Form'));
 		$this->load->helper('form');
 		$this->load->library('form_validation');
-
-		$this->form_validation->set_rules('name', 'Form name', 'required|trim');
-		$this->form_validation->set_rules('description', 'Form description', '');
-
+		
 		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
-	
+
 		$requestType = $this->input->server('REQUEST_METHOD');
-		if ($requestType == 'GET')	//If get request, creating new form
+		if ($requestType == 'GET') //If get request, creating new form
 		{
+			$this->load->view('header', array('title'=>'- Create Form'));
 			$this->load->view('create_form', array('numFields'=>1));
 		}
-		else if ($requestType == 'POST')	//Else if post request, adding newly created form to database
+		else if ($requestType == 'POST') //Else if post request, adding newly created form to database
 		{
+			//Form attribute validation
+			$this->form_validation->set_rules('name', 'Form name', 'required|trim');
+			$this->form_validation->set_rules('description', 'Form description', '');
+
 			$numFields = count($this->input->post('fields'));
 			
-			//Insert form attribute validation here?
 			$name = $this->input->post('name');
 			$description = $this->input->post('description');
 			$user = $this->input->post('user');
-			
+
 			$fields = array();
-			foreach ($this->input->post('fields') as $i=>$fieldAttributes)	//for each array of field info in the array of fields
+			foreach ($this->input->post('fields') as $i=>$fieldAttributes) //for each array of field info in the array of fields
 			{
-				$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', '');
+				//Field attribute validation for each field attribute input
+				$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', 'required');
 				$this->form_validation->set_rules('fields['.$i.'][description]', 'help text', '');
 				$this->form_validation->set_rules('fields['.$i.'][type]', 'type', 'callback__fieldTypeCheck');
 				$this->form_validation->set_rules('fields['.$i.'][required]', 'field requirement', '');
-				$this->form_validation->set_rules('fields['.$i.'][options][]', 'field option', 'trim');
-				$field = new Field();
+				//$this->form_validation->set_rules('fields['.$i.'][options][]', 'field option', 'callback__seperatorCheck|trim');
 				
-				//Some field attribute validation should be inserted for each attribute
+				$field = new Field();
 				$field->name = $fieldAttributes['name'];
 				$field->type = $fieldAttributes['type'];
-				foreach ($fieldAttributes['options'] as $options)
-				{
-					if (strstr($options, OPT_SEPARATOR))
-					{
-						//Reject option as invalid
-					}
-				}
+				
 				$fOptions = new FieldOptions($fieldAttributes['options']);
 				$field->options = $fOptions->getSerialized();
 				$field->required = isset($fieldAttributes['required']);
 				$field->description = $fieldAttributes['description'];
 				$fields[] = $field;
 			}
-			//Use createForm to add the form to the database
-			$this->load->library('FormsDB');
-			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
-			if ($this->form_validation->run() == FALSE || !$form_id) 
+			
+			if ($this->form_validation->run() == FALSE)	// If some inputs are invalid
 			{
+				$this->load->view('header', array('title'=>'- Create Form'));
 				$this->load->view('create_form', array('numFields'=>$numFields));
 				$this->load->view('footer');
 				return;
 			}
 			
+			//Use createForm to add the form to the database
+			$this->load->library('FormsDB');
+			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
+
+			if (!$form_id)	// If the insert failed
+			{
+				$this->load->view('header', array('title'=>'- Create Form'));
+				$this->load->view('create_form', array('numFields'=>$numFields));
+				$this->load->view('footer');
+				return;
+			}
+			
+			//If there are no errors
 			$this->load->view('header', array('title'=>'- Success!'));
 			$this->load->view('create_success', array('form_name'=>$name, 'form_id'=>$form_id));
 		}
-		
+
 		$this->load->view('footer');
 	}
-	
+
 	public function data($form_id)
 	{
 		$this->load->view('header');
-		
+
 		$this->load->database();
-		
+
 		$this->db->from('Forms')->where('form_id',$form_id);
 		$form = $this->db->get()->row();
 		$form_name = $form->form_name;
-		
-		
+
+
 		$this->db->from('Fields')->where('form_id',$form_id)->order_by('field_order','asc');
 		$query = $this->db->get();
 		$fields = array();
@@ -107,11 +118,11 @@ class Admin extends CI_Controller {
 		{
 			$fields[$field->field_id] = $field->field_name;
 		}
-		
+
 		$this->db->from('Filled_Forms')->where('form_id',$form_id);
 		$query = $this->db->get();
 		$responses = array();
-		foreach ($query->result() as $row) 
+		foreach ($query->result() as $row)
 		{
 			$this->db->from('Filled_Values')->where('instance_id', $row->instance_id);
 			$subquery = $this->db->get();
@@ -123,21 +134,21 @@ class Admin extends CI_Controller {
 			}
 			array_push($responses, $response);
 		}
-		
+
 		$this->load->view('form_data', array('form_name'=>$form_name, 'fields'=>$fields, 'data'=>$responses));
 		$this->load->view('footer');
 	}
-	
+
 	public function changeMode($admin)
 	{
 		if ($admin === "admin")
-			$this->session->set_userdata('admin', true);
+		$this->session->set_userdata('admin', true);
 		else if ($admin === "user")
-			$this->session->unset_userdata('admin');
+		$this->session->unset_userdata('admin');
 		redirect(base_url() . $this->input->get('next', TRUE));
 	}
-	
-	public function dbcheck() 
+
+	public function dbcheck()
 	{
 		$this->load->library('FormsDB');
 		echo "Connected to db!" . PHP_EOL;

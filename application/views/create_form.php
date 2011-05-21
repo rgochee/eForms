@@ -26,7 +26,7 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 
 	<ul id="fields">
 	<?php $fields = returnWithDefault($fields, array(array())); ?>
-	<?php for($i=0; $i<array_count('fields[]'); $i++):
+	<?php for($i=0; $i<$numFields; $i++):
 		$field = array(); ?>
 	<?php $this->load->view('edit_field', array('field_id'=>$i, 'field'=>$field)); ?>
 	<?php endfor ?>

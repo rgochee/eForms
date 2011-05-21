@@ -5,13 +5,17 @@
 ?>
 <li id="field#<?php echo $field_id; ?>" class="field">
 	<label class="field_label" for="name<?php echo $field_id; ?>">Field Name</label>
+	<?php echo form_error('fields['. $field_id .'][name]'); ?>
 	<input id="name<?php echo $field_id; ?>" type="text" name="<?php echo $fld_name; ?>[name]" value="<?php echo set_value($fld_name.'[name]') ?>" size="50" />
 	<a class="delete_field" href="#">Delete Field</a>
 	
 	<label class="field_label" for="description<?php echo $field_id; ?>">Help Text</label>
+	<?php echo form_error('fields['. $field_id .'][description]'); ?>
 	<textarea id="description<?php echo $field_id; ?>" name="<?php echo $fld_name; ?>[description]" rows="3" cols="35"><?php echo set_value($fld_name.'[description]') ?></textarea>
 	
 	<label class="field_label" for="type<?php echo $field_id; ?>">Type</label>
+	<?php echo form_error('fields['. $field_id .'][type]'); ?>
+	<?php echo form_error('fields['. $field_id .'][required]'); ?>
 	<select id="type<?php echo $field_id; ?>"  class="type_select" name="<?php echo $fld_name; ?>[type]">
 	<?php foreach ($types as $type): ?>
 	<option value="<?php echo $type; ?>" <?php echo set_select($fld_name.'[type]', $type, $type==$types[0]); ?>>
