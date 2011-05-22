@@ -1,43 +1,72 @@
 <?php
-	$types = array(
-		"textbox" => "Text",
-		"checkbox" => "Checkboxes",
-		"radio" => "Radio",
-		"dropdown" => "Dropdown list"
-	);
+	$this->load->model('form');
+	$types = FieldTypes::getArray();
+	$fld_name = 'fields[' . $field_id . ']';
 ?>
-<li id="field#<?=$field_id?>" class="field">
-	<label class="field_label" for="name<?=$field_id?>">Field Name</label>
-	<input id="name<?=$field_id?>" type="text" name="fields[<?=$field_id?>][name]" value="<?=tryPrint($field['name'])?>" size="50" />
-	<a class="delete_field" href="#">Delete Field</a>
+<li id="field#<?php echo $field_id; ?>" class="field">
+	<?php 
+		echo form_label('Field Name', 'name'.$field_id, array('class' => 'field_label')); 
+		echo form_error('fields['. $field_id .'][name]'); 
+		echo form_input(array(
+			'name' => $fld_name.'[name]',
+			'id' => 'name'.$field_id,
+			'value' => set_value($fld_name.'[name]'),
+			'size' => '50'
+			)); 
+	?>
+	<a class="delete_btn" href="#">Delete Field</a>
 	
-	<label class="field_label" for="description<?=$field_id?>">Help Text</label>
-	<textarea id="description<?=$field_id?>" name="fields[<?=$field_id?>][description]" rows="3" cols="35"><?=tryPrint($field['description'])?></textarea>
+	<?php 
+		echo form_label('Help Text', 'description'.$field_id, array('class' => 'field_label')); 
+		echo form_error('fields['. $field_id .'][description]'); 
+		echo form_textarea(array(
+			'name' => $fld_name.'[description]',
+			'id' => 'description'.$field_id,
+			'value' => set_value($fld_name.'[description]'),
+			'cols' => 35,
+			'rows' => 3,
+			)); 
+	?>
 	
-	<label class="field_label" for="type<?=$field_id?>">Type</label>
-	<select id="type<?=$field_id?>"  class="type_select" name="fields[<?=$field_id?>][type]">
-	<?php $field_type = returnWithDefault($field['type'], "text") ?>
-	<?php foreach ($types as $val=>$text): ?>
-	<?php if ($field_type === $val): ?>
-		<option value="<?=$val?>" selected="selected"><?=$text?></option>
-	<?php else: ?>
-		<option value="<?=$val?>"><?=$text?></option>
-	<?php endif ?>
-	<?php endforeach ?>
-	</select>
+	<?php 
+		echo form_label('Field Type', 'type'.$field_id, array('class' => 'field_label')); 
+		echo form_error('fields['. $field_id .'][type]'); 
+		echo form_error('fields['. $field_id .'][required]'); 
+		echo form_select($fld_name.'[type]', $types, set_value($fld_name.'[type]'), 
+			array(
+				'id' => 'type'.$field_id, 
+				'class' => 'type_select'
+				)); 
+	?>
 	
-	<input  id="required<?=$field_id?>" type="checkbox" name="fields[<?=$field_id?>][required]" />
-	<label for="required<?=$field_id?>">This field is required.</label>
+	<?php 
+		echo form_checkbox(array(
+			'name' => $fld_name.'[required]',
+			'id' => 'required'.$field_id,
+			'value' => 'true',
+			'checked' => set_value($fld_name.'[required]'),
+			));
+		echo form_label('This field is required', 'required'.$field_id); 
+	?>
 	
-	<?php $field_options = returnWithDefault($field['options'], array("")); ?>
 	<ul class="options">
-		<?php foreach ($field_options as $option): ?>
+		<?php $optionNum = array_count($fld_name.'[options][]'); ?>
+		<?php for($i=0; $i<$optionNum; $i++): ?>
 		<li>
 			<span class="dummy"></span>
-			<input name="fields[<?=$field_id?>][options][]" type="text" value="<?=$option?>" size="50" />
-			<a class="delete_option" href="#">X</a>
+			<?php echo form_input(array(
+				'name' => $fld_name.'[options][]',
+				'value' => set_value($fld_name.'[options][]'),
+				'size' => '50'
+				)); 
+			?>
+			<a class="delete_btn" href="#">X</a>
 		</li>
-		<?php endforeach ?>
-		<a class="add_option" href="#">Add Option</a>
+		<?php endfor ?>
+		<a class="add_btn add_option" href="#">Add Option</a>
+	</ul>
+	
+	<ul class="validation">
+		<li><a class="add_btn" href="#">Add Validation</a></li>
 	</ul>
 </li>

@@ -91,4 +91,34 @@ class FieldOptions {
 	}
 }
 
+class FieldTypes  {
+	
+	private static $types = array(
+		'textbox' => 'Text', 
+		'checkbox' => 'Checkbox', 
+		'radio' => 'Radio', 
+		'dropdown' => 'Dropdown list'
+		);
+	
+	public static function getValues()
+	{
+		return array_keys(self::$types);
+	}
+	
+	public static function getArray()
+	{
+		return self::$types;
+	}
+	
+	public static function isValid($type)
+	{
+		return array_key_exists($type, self::$types);
+	}
+	
+	public static function asPrettyName($type)
+	{
+		return self::$types[$type];
+	}
+}
+
 ?>

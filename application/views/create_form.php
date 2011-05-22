@@ -1,35 +1,37 @@
 <style type="text/css">
+#create_form { padding-bottom: 30px; }
 .field { list-style-type: none; border-bottom: 1px solid #bbb; padding: 5px 5px 8px; margin-top: 10px; background-color: #F0F0F0; }
 .field input, .field select { margin-bottom: 3px; }
 .field input[type=text], .field textarea { width: 400px; }
 
 .options { display: none; }
-.delete_field, .delete_option { display: inline-block; margin-left: 5px; color: #FF5C00; font-weight: bold; padding: 1px 2px; }
-.add_option { color: #A6A500; }
-.delete_field, .add_option, .delete_option { text-decoration: none; }
-.delete_field:hover, .add_option:hover, .delete_option:hover { text-decoration: underline; }
+.add_btn { color: #2E3884; }
+.add_btn, .delete_btn { display: inline-block; text-decoration: none; }
+.delete_btn { margin-left: 5px; color: #BF6430; font-weight: bold; padding: 3px; }
+.delete_btn:hover { text-decoration: underline; color: #FF5C00; }
 #name { height: 22px; padding: 2px; }
 textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
+.editingField { background-color: #FFFE73; border-bottom: 1px solid #BFBE30; } 
 </style>
 
 <form id="create_form" method="post">
 <h2>Create Form</h2>
-
-	<div class="field">
+	<div class="field editingField">
 		<label class="field_label"  for="name">Form Name</label>
-		<input id="name" type="text" name="name" size="50" />
+		<?php echo form_error('name'); ?>
+		<input id="name" type="text" name="name" size="50" value="<?php echo set_value('name'); ?>" />
 		
 		<label class="field_label"  for="description">Form Description</label>
-		<textarea id="description" name="description" cols="50" value=""></textarea>
-		
-		<input id="form_id" type="hidden" name="form_id" />
+		<?php echo form_error('description'); ?>
+		<textarea id="description" name="description" cols="50"><?php echo set_value('description'); ?></textarea>
 	</div>
 
 	<ul id="fields">
 	<?php $fields = returnWithDefault($fields, array(array())); ?>
-	<?php foreach($fields as $i => $field): ?>
+	<?php for($i=0; $i<$numFields; $i++):
+		$field = array(); ?>
 	<?php $this->load->view('edit_field', array('field_id'=>$i, 'field'=>$field)); ?>
-	<?php endforeach ?>
+	<?php endfor ?>
 	</ul>
 
 	<div id="form_btns" class="field">
@@ -53,7 +55,10 @@ $(document).ready(function() {
 			index = $('#fields').children().length,
 			
 			html = tpl.replace(/{{index}}/g, index);
-		$('#fields').append(html);
+		$(html)
+			.appendTo('#fields')
+			.children('input:first')
+				.trigger('focus');
 	});
 	$('.add_option').live('click', function(e) {
 		e.preventDefault();
@@ -63,7 +68,7 @@ $(document).ready(function() {
 		html.children('input').val("");
 		$(this).before(html);
 	});
-	$('.delete_field, .delete_option').live('click', function(e) {
+	$('.delete_btn').live('click', function(e) {
 		e.preventDefault();
 		
 		var li = $(this).parent(),
@@ -75,7 +80,7 @@ $(document).ready(function() {
 		var type = $(this).val(),
 			dummy = "";
 		
-		switch(type) {
+		switch (type) {
 			case "textbox": 
 				$(this).siblings('.options').hide();
 			break;
@@ -95,6 +100,14 @@ $(document).ready(function() {
 			break;
 		}
 	}).trigger('change');
+	$('.field').live('focus', function() {
+		var fieldDiv = $(this);
+		
+		if (!fieldDiv.hasClass('editingField') && fieldDiv.attr('id') !== 'form_btns') {
+			$('.editingField').removeClass('editingField');
+			fieldDiv.addClass('editingField');
+		}
+	});
 });
 
 </script>

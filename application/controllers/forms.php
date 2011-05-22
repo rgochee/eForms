@@ -31,6 +31,10 @@ class Forms extends CI_Controller {
 	public function fill($form_id)
 	{
 		$this->load->library('FormsDB');
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 		
 		$requestType = $this->input->server('REQUEST_METHOD');
 		if ($requestType == 'GET') //If get request, ready to fill out the form
@@ -44,18 +48,44 @@ class Forms extends CI_Controller {
 		{
 			$form = $this->formsdb->getForm($form_id);
 			$user = $this->input->post('user');
-			$values = $this->input->post('fields');
-			foreach($values as $fid => $value)
+			$fields = $this->input->post('fields');
+			
+			foreach($form->fields as $field)
 			{
-				//Do answer validation here
+				//Adding rules for validation based on field attributes
+				$rules = array();
+				if ($field->required)
+				{
+					$rules[] = 'required';
+				}
+				$this->form_validation->set_rules('fields['.$field->id.']', $field->name, implode('|', $rules));
+			}
+			if ($this->form_validation->run() == FALSE)	//If validation rules have been violated
+			{
+				$this->load->view('header', array('title'=>'- '.$form->name));
+				$this->load->view('fill_form', array('form'=>$form));
+				$this->load->view('footer');
+				return;
+			}
+			
+			$datas = array();
+			foreach($form->fields as $field)
+			{
+				if (!isset($fields[$field->id]))	//If it wasn't required and isn't filled in
+				{
+					$fields[$field->id] = '';	//Make the value empty
+				}
+				$value = $fields[$field->id];
 				
-				if (is_array($value))
+				if (is_array($value))	//If the answer is an array of options
 				{
 					$fOptions = new FieldOptions($value);
-					$values[$fid] = $fOptions->getSerialized();
+					$fields[$field->id] = $fOptions->getSerialized();
 				}
+				$datas[$field->id] = $fields[$field->id];
 			}
-			$instanceid = $this->formsdb->addFilledForm($form->id, $user, $values);
+			//No errors have occured, data can be inserted successfully
+			$instanceid = $this->formsdb->addFilledForm($form->id, $user, $datas);
 			
 			$this->load->view('header', array('title'=>'- Success!'));
 			$this->load->view('fill_success');

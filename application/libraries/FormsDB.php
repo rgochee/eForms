@@ -45,6 +45,13 @@ class FormsDB {
 		return $form_id;
 	}
 	
+	function formExists($name)
+	{
+		$this->CI->db->from('Forms')->where('form_name',$name)->limit(1);
+		$query = $this->CI->db->get();
+		return $query->num_rows() != 0;
+	}
+	
 	// return value: Form object with form structure info
 	function getForm($form_id)
 	{
