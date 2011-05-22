@@ -42,8 +42,8 @@ class Admin extends CI_Controller {
 		else if ($requestType == 'POST') //Else if post request, adding newly created form to database
 		{
 			//Form attribute validation
-			$this->form_validation->set_rules('name', 'Form name', 'required|trim');
-			$this->form_validation->set_rules('description', 'Form description', '');
+			$this->form_validation->set_rules('name', 'Form name', 'required|trim|callback__unavailable_name');
+			$this->form_validation->set_rules('description', 'Form description', 'trim');
 
 			$numFields = count($this->input->post('fields'));
 			
@@ -55,8 +55,8 @@ class Admin extends CI_Controller {
 			foreach ($this->input->post('fields') as $i=>$fieldAttributes) //for each array of field info in the array of fields
 			{
 				//Field attribute validation for each field attribute input
-				$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', 'required');
-				$this->form_validation->set_rules('fields['.$i.'][description]', 'help text', '');
+				$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', 'required|trim');
+				$this->form_validation->set_rules('fields['.$i.'][description]', 'help text', 'trim');
 				$this->form_validation->set_rules('fields['.$i.'][type]', 'type', 'callback__fieldTypeCheck');
 				$this->form_validation->set_rules('fields['.$i.'][required]', 'field requirement', '');
 				//$this->form_validation->set_rules('fields['.$i.'][options][]', 'field option', 'callback__seperatorCheck|trim');
@@ -98,6 +98,20 @@ class Admin extends CI_Controller {
 		}
 
 		$this->load->view('footer');
+	}
+	
+	public function _unavailable_name($form_name)
+	{
+		$this->load->library('FormsDB');
+		if ($this->formsdb->formExists($form_name))
+		{
+			$this->form_validation->set_message('_unavailable_name', 'The form name already exists.');
+			return FALSE;
+		}
+		else
+		{
+			return TRUE;
+		}
 	}
 
 	public function data($form_id)
