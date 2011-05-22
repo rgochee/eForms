@@ -11,9 +11,9 @@ body { position: absolute; width:100%; height: 100%; font-family: Verdana, Helve
 .clear { clear: both; }
 #footer { color: #2E3884; }
 #footer a { color: inherit; }
-#footer_inner { width: 800px; height: 19px; margin: 0 auto; border-top: 1px solid #717DD7; }
+#footer_inner { width: 800px; height: 19px; margin: 5px auto 0; border-top: 1px solid #717DD7; }
 
-#content { min-height: 100%; margin-bottom: -20px; }
+#content { min-height: 100%; margin-bottom: -25px; }
 #content_inner { width: 800px; padding: 10px; margin: 0 auto; }
 #toolbar { width: 100%; padding-top: 50px; background-color: #D0D0D0; border-top: 1px solid #4B5CD7; border-bottom: 1px solid #A6A500; }
 #menubar { padding: 5px 0 0 5px; }
@@ -28,11 +28,11 @@ body { position: absolute; width:100%; height: 100%; font-family: Verdana, Helve
 h2 { font-size: 25px; font-family: Georgia, Times, serif;  font-variant: small-caps; margin: 15px 0 10px; }
 h3 { font-size: 20px; font-family: Georgia, Times, serif; margin: 15px 0 10px; border-bottom: 1px solid #BFBE30; color: #A6A500; }
 .field { margin: 25px 0 10px; }
-.field_label { display: block; font-weight: bold; }
+.field_label { display: block; font-weight: bold; margin-top: 3px; }
 .field_required { display: block; font-weight: bold; color:#F00; text-decoration: underline }
 .field_help { display: block; }
 .error { color: #FF5C00; vertical-align: top; clear: right; }
-.options { list-style: none; }
+.options, .validation { list-style: none; }
 .options li { padding: 2px; }
 .dropdown { margin-top: 5px; }
 pre { font-family: Consolas, Lucida Console, Courier New, monospace; }

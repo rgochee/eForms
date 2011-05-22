@@ -100,9 +100,14 @@ class FieldTypes  {
 		'dropdown' => 'Dropdown list'
 		);
 	
-	public static function getTypes()
+	public static function getValues()
 	{
 		return array_keys(self::$types);
+	}
+	
+	public static function getArray()
+	{
+		return self::$types;
 	}
 	
 	public static function isValid($type)
