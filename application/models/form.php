@@ -7,6 +7,7 @@ class Form {
 	var $name;
 	var $description;
 	var $user;
+	var $time;
 	var $disabled;
 	var $fields;
 }
