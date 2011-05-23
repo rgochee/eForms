@@ -10,14 +10,14 @@
 	<span class="field_help"><?php echo $field->description; ?></span>
 	<?php echo form_error('fields['.$field->id.']'); ?>
 	<?php if ($field->type=="checkbox"): ?>
-		<?php foreach ($field->options->getOptions() as $option_id=>$option): ?>
+		<?php foreach ($field->options->getValueOptions() as $option_id=>$option): ?>
 			<div class="subfield">
 			<input id="fields<?php echo $field->id."-".$option_id; ?>" name="fields[<?php echo $field->id; ?>][]" type="checkbox" value="<?php echo $option; ?>" />
 			<label for="fields<?php echo $field->id."-".$option_id; ?>"><?php echo $option; ?></label>
 			</div>
 		<?php endforeach ?>
 	<?php elseif ($field->type=="radio"): ?>
-		<?php foreach ($field->options->getOptions() as $option_id=>$option): ?>
+		<?php foreach ($field->options->getValueOptions() as $option_id=>$option): ?>
 			<div class="subfield">
 			<input id="fields<?php echo $field->id."-".$option_id; ?>" name="fields[<?php echo $field->id; ?>]" type="radio" value="<?php echo $option; ?>" /> 
 			<label for="fields<?php echo $field->id."-".$option_id; ?>"><?php echo $option; ?></label>
@@ -25,7 +25,7 @@
 		<?php endforeach ?>
 	<?php elseif ($field->type=="dropdown"): ?>
 		<select id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]">
-		<?php foreach ($field->options->getOptions() as $option): ?>
+		<?php foreach ($field->options->getValueOptions() as $option): ?>
 			<option value="<?php echo $option; ?>" /> <?php echo $option; ?></option>
 		<?php endforeach ?>
 		</select>

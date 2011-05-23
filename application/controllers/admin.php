@@ -81,8 +81,9 @@ class Admin extends CI_Controller {
 				$field->name = $fieldAttributes['name'];
 				$field->type = $fieldAttributes['type'];
 				
-				$fOptions = new ValueOptions($fieldAttributes['options']);
-				$field->options = $fOptions->getSerialized();
+				$options = new FieldOptions();
+				$options->setValueOptions($fieldAttributes['options']);
+				$field->options = $options;
 				$field->required = isset($fieldAttributes['required']);
 				$field->description = $fieldAttributes['description'];
 				$fields[] = $field;
@@ -100,7 +101,6 @@ class Admin extends CI_Controller {
 			$this->load->library('FormsDB');
 			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
 			
-			$this->form_validation->set_message('name', 'BLAH');
 			if (!$form_id)	// If the insert failed
 			{
 				$this->load->view('header', array('title'=>'- Create Form'));

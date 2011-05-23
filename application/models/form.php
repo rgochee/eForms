@@ -1,5 +1,6 @@
 <?php
 
+define('RULE_SEPARATOR', '|');
 define('OPT_SEPARATOR', '``');
 
 class Form {
@@ -20,20 +21,30 @@ class Field {
 	var $required;
 	var $description;
 	var $value;
+	
+	public static function serializeValueArray($values) 
+	{
+		return implode(OPT_SEPARATOR, $values);
+	}
+	
+	public static function deserializeValueString($valueStr)
+	{
+		return explode(OPT_SEPARATOR, $valueStr);
+	}
 }
 
-class ValueOptions {
-	private $options;
+class FieldOptions {
+	private $rules;
+	private $values;
 
 	public function __construct($data = NULL)
 	{
-		if ($data)
+		$this->rules = array();
+		$this->values = array();
+		
+		if (isset($data))
 		{
 			$this->setOptions($data);
-		}
-		else
-		{
-			$this->options = array();
 		}
 	}
 	public function __toString()
@@ -41,27 +52,12 @@ class ValueOptions {
 		return $this->getSerialized();
 	}
 	
-	public function addOption($opt)
-	{
-		if (!in_array($opt, $this->options))
-		{
-			$this->options[] = $opt;
-		}
-	}
-	public function removeOption($opt)
-	{
-		$key = array_search($opt, $this->options);
-		if ($key !== NULL)
-		{
-			unset($this->options[$key]);
-		}
-	}
 	public function setOptions($data)
 	{
+		// treat all options as a rule
 		if (is_array($data))
 		{
-			// NOTE: may want to validate data format?
-			$this->options = $data;
+			$this->rules = $data;
 		}
 		else
 		{
@@ -69,42 +65,61 @@ class ValueOptions {
 			$data = (string) $data;
 			
 			// split by separator
-			$this->options = self::deserialize($data);
+			$this->rules = explode(RULE_SEPARATOR, $data);
 		}
-		$this->options = array_unique($this->options);
-	}
-	public function getOptions()
-	{
-		return $this->options;
-	}
-	public function getSerialized()
-	{
-		return self::serialize($this->options);
+		$this->values = array_unique($this->values);
+		
+		// separate value options from the other rules
+		foreach ($this->rules as $index=>$rule)
+		{
+			if (preg_match_all('/valid_value\[(.*?)\]/', $rule, $matches))
+			{
+				$this->setValueOptions($matches[1][0]);
+				unset($this->rules[$index]);
+				break;
+			}
+		}
 	}
 	
-	public static function serialize($data)
+	public function setValueOptions($data)
 	{
-		$values = implode(OPT_SEPARATOR, $data);
-		if (!empty($values))
+		if (is_array($data))
 		{
-			return "values[". $values . "]";
+			// NOTE: may want to validate data format?
+			$this->values = $data;
 		}
 		else
 		{
-			return "";
+			// assume it's a string
+			$data = (string) $data;
+			
+			// split by separator
+			$this->values = Field::deserializeValueString($data);
 		}
+		$this->values = array_unique($this->values);
 	}
-	public static function deserialize($data)
+	
+	public function getValueOptions()
 	{
-		// 2nd return for backwards compatibility (should be removed eventually)
-		// Possible problems when first option starts with "values["
-		if (substr($data, 0, 7) === "values[")
+		return $this->values;
+	}
+	
+	public function getSerialized()
+	{
+		$rulesStr = implode(RULE_SEPARATOR, $this->rules);
+		$valuesStr = Field::serializeValueArray($this->values);
+		
+		if (empty($rulesStr))
 		{
-			return explode(OPT_SEPARATOR, substr($data, 7, -1));
+			return $valuesStr;
+		}
+		else if (empty($valuesStr))
+		{
+			return $rulesStr;
 		}
 		else
 		{
-			return explode(OPT_SEPARATOR, $data);
+			return $rulesStr . RULE_SEPARATOR . 'valid_value[' . $valuesStr . ']';
 		}
 	}
 }

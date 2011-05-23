@@ -42,7 +42,7 @@ class FormsDB {
 						'form_id' => $form_id,
 						'field_name' => $field->name,
 						'field_type' => $field->type,
-						'field_options' => $field->options,
+						'field_options' => $field->options->getSerialized(),
 						'field_required' => $field->required,
 						'field_description' => $field->description,
 						'field_order' => $order
@@ -112,7 +112,7 @@ class FormsDB {
 				$field->id = $row->field_id;
 				$field->name = $row->field_name;
 				$field->type = $row->field_type;
-				$field->options = new ValueOptions($row->field_options);
+				$field->options = new FieldOptions($row->field_options);
 				$field->required = $row->field_required;
 				$field->description = $row->field_description;
 				
