@@ -49,6 +49,7 @@
 		echo form_label('This field is required', 'required'.$field_id); 
 	?>
 	
+	<?php echo form_error('fields['. $field_id .'][options][]'); ?>
 	<ul class="options">
 		<?php $optionNum = array_count($fld_name.'[options][]'); ?>
 		<?php for($i=0; $i<$optionNum; $i++): ?>

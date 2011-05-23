@@ -22,7 +22,7 @@ class Field {
 	var $value;
 }
 
-class FieldOptions {
+class ValueOptions {
 	private $options;
 
 	public function __construct($data = NULL)
@@ -69,7 +69,7 @@ class FieldOptions {
 			$data = (string) $data;
 			
 			// split by separator
-			$this->options = explode(OPT_SEPARATOR, $data);
+			$this->options = self::deserialize($data);
 		}
 		$this->options = array_unique($this->options);
 	}
@@ -79,16 +79,33 @@ class FieldOptions {
 	}
 	public function getSerialized()
 	{
-		return implode(OPT_SEPARATOR, $this->options);
+		return self::serialize($this->options);
 	}
 	
 	public static function serialize($data)
 	{
-		return implode(OPT_SEPARATOR, $data);
+		$values = implode(OPT_SEPARATOR, $data);
+		if (!empty($values))
+		{
+			return "values[". $values . "]";
+		}
+		else
+		{
+			return "";
+		}
 	}
 	public static function deserialize($data)
 	{
-		return explode(OPT_SEPARATOR, $data);	
+		// 2nd return for backwards compatibility (should be removed eventually)
+		// Possible problems when first option starts with "values["
+		if (substr($data, 0, 7) === "values[")
+		{
+			return explode(OPT_SEPARATOR, substr($data, 7, -1));
+		}
+		else
+		{
+			return explode(OPT_SEPARATOR, $data);
+		}
 	}
 }
 

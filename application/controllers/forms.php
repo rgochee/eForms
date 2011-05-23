@@ -79,7 +79,7 @@ class Forms extends CI_Controller {
 				
 				if (is_array($value))	//If the answer is an array of options
 				{
-					$fOptions = new FieldOptions($value);
+					$fOptions = new ValueOptions($value);
 					$fields[$field->id] = $fOptions->getSerialized();
 				}
 				$datas[$field->id] = $fields[$field->id];
@@ -92,6 +92,7 @@ class Forms extends CI_Controller {
 			$this->load->view('footer');
 		}
 	}
+	
 }
 
 /* End of file welcome.php */
