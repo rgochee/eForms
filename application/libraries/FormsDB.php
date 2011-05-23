@@ -36,7 +36,8 @@ class FormsDB {
 						'field_options' => $field->options,
 						'field_required' => $field->required,
 						'field_description' => $field->description,
-						'field_order' => $order
+						'field_order' => $order,
+						'time_created' => time()
 						);
 			$this->CI->db->insert('Fields', $fieldData);
 			++$order;
@@ -72,6 +73,7 @@ class FormsDB {
 		$form->description = $row->form_description;
 		$form->user = $row->user;
 		$form->disabled = $row->form_disabled;
+		$form->time = $row->time_created;
 
 		// get fields info
 		$this->CI->db->from('Fields')->where('form_id',$form_id)->order_by('field_order','asc');
