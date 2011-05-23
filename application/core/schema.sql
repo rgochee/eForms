@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `Filled_Forms` (
   `form_id` int(11) NOT NULL,
   `user` varchar(20) NOT NULL,
   `time` int(13) NOT NULL,
+  `status` tinyint(1) NOT NULL,
   PRIMARY KEY  (`instance_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
