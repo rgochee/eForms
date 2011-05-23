@@ -65,7 +65,7 @@ class Admin extends CI_Controller {
 				$field->name = $fieldAttributes['name'];
 				$field->type = $fieldAttributes['type'];
 				
-				$fOptions = new FieldOptions($fieldAttributes['options']);
+				$fOptions = new ValueOptions($fieldAttributes['options']);
 				$field->options = $fOptions->getSerialized();
 				$field->required = isset($fieldAttributes['required']);
 				$field->description = $fieldAttributes['description'];

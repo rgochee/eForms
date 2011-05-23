@@ -20,31 +20,55 @@ class FormsDB {
 		$formData = array(
 					'form_name' => $name,
 					'form_description' => $description,
-					'user' => $user
+					'user' => $user,
+					'time_created' => time()
 					);
 		$this->CI->db->insert('Forms', $formData);
 		$form_id = $this->CI->db->insert_id();
 		
+		if ($this->CI->db->affected_rows() == 0)
+		{
+			$error = 'Insert to Forms failed: ' . $this->CI->db->_error_message();
+			log_message('error', $error);
+			return FALSE;
+		}
+		
 		// insert $field info
+		$db_fields = array();
 		$order = 0;
 		foreach ($fields as $field)
 		{
-			$fieldData = array(
+			$db_fields[] = array(
 						'form_id' => $form_id,
 						'field_name' => $field->name,
 						'field_type' => $field->type,
 						'field_options' => $field->options,
 						'field_required' => $field->required,
 						'field_description' => $field->description,
-						'field_order' => $order,
-						'time_created' => time()
+						'field_order' => $order
 						);
-			$this->CI->db->insert('Fields', $fieldData);
 			++$order;
+		}
+		
+		$this->CI->db->insert_batch('Fields', $db_fields);
+		// if there's an error, undo all inserts
+		if ($this->CI->db->affected_rows() < count($fields))
+		{
+			$error = 'Insert to Fields failed: ' . $this->CI->db->_error_message();
+			log_message('error', $error);
+			$this->deleteForm($form_id);
+			return FALSE;
 		}
 		
 		return $form_id;
 	}
+	
+	function deleteForm($form_id)
+	{
+		$this->CI->db->delete('Forms', array('form_id' => $form_id));
+		$this->CI->db->delete('Fields', array('form_id' => $form_id));
+	}
+	
 	
 	function formExists($name)
 	{
@@ -88,7 +112,7 @@ class FormsDB {
 				$field->id = $row->field_id;
 				$field->name = $row->field_name;
 				$field->type = $row->field_type;
-				$field->options = new FieldOptions($row->field_options);
+				$field->options = new ValueOptions($row->field_options);
 				$field->required = $row->field_required;
 				$field->description = $row->field_description;
 				
@@ -116,7 +140,7 @@ class FormsDB {
 			$this->CI->db->order_by('form_name', 'asc');
 		}
 		
-		if ($options & FormsDB::show_disabled == 0)
+		if ($options & FormsDB::SHOW_DISABLED == 0)
 		{
 			$this->CI->db->where('form_disabled', 0);
 		}
