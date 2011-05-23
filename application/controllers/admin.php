@@ -15,15 +15,31 @@ class Admin extends CI_Controller {
 		$this->load->view('header');
 		$this->load->view('footer');
 	}
-
+	
+	public function _unavailable_name($form_name)
+	{
+		$this->load->library('FormsDB');
+		if ($this->formsdb->formExists($form_name))
+		{
+			$this->form_validation->set_message('_unavailable_name', 'The form name already exists.');
+			return FALSE;
+		}
+		else
+		{
+			return TRUE;
+		}
+	}
+	
 	public function _fieldTypeCheck($type) {
 		$this->load->model('form');
+		$this->form_validation->set_message('_fieldTypeCheck', 'Invalid field type.');
 		return FieldTypes::isValid($type);
 	}
 	
-	public function _seperatorCheck($option)
+	public function _separatorCheck($option)
 	{
-		return strstr($option, OPT_SEPARATOR);
+		$this->form_validation->set_message('_separatorCheck', 'Options must not contain "' . OPT_SEPARATOR . '".');
+		return strpos($option, OPT_SEPARATOR) === FALSE;
 	}
 
 	public function create()
@@ -55,11 +71,11 @@ class Admin extends CI_Controller {
 			foreach ($this->input->post('fields') as $i=>$fieldAttributes) //for each array of field info in the array of fields
 			{
 				//Field attribute validation for each field attribute input
-				$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', 'required|trim');
+				$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', 'trim|required');
 				$this->form_validation->set_rules('fields['.$i.'][description]', 'help text', 'trim');
 				$this->form_validation->set_rules('fields['.$i.'][type]', 'type', 'callback__fieldTypeCheck');
 				$this->form_validation->set_rules('fields['.$i.'][required]', 'field requirement', '');
-				//$this->form_validation->set_rules('fields['.$i.'][options][]', 'field option', 'callback__seperatorCheck|trim');
+				$this->form_validation->set_rules('fields['.$i.'][options][]', 'field option', 'trim|callback__separatorCheck');
 				
 				$field = new Field();
 				$field->name = $fieldAttributes['name'];
@@ -83,7 +99,8 @@ class Admin extends CI_Controller {
 			//Use createForm to add the form to the database
 			$this->load->library('FormsDB');
 			$form_id = $this->formsdb->createForm($name, $description, $user, $fields);
-
+			
+			$this->form_validation->set_message('name', 'BLAH');
 			if (!$form_id)	// If the insert failed
 			{
 				$this->load->view('header', array('title'=>'- Create Form'));
@@ -98,20 +115,6 @@ class Admin extends CI_Controller {
 		}
 
 		$this->load->view('footer');
-	}
-	
-	public function _unavailable_name($form_name)
-	{
-		$this->load->library('FormsDB');
-		if ($this->formsdb->formExists($form_name))
-		{
-			$this->form_validation->set_message('_unavailable_name', 'The form name already exists.');
-			return FALSE;
-		}
-		else
-		{
-			return TRUE;
-		}
 	}
 
 	public function data($form_id)
