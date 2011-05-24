@@ -4,13 +4,15 @@
 <p><?php echo $form->description; ?></p>
 
 <form method="post">
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/smoothness/jquery-ui.css" type="text/css" /> ..
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
 <?php foreach ($form->fields as $field): ?>
 <div class="field">
 	<label for="fields<?php echo $field->id; ?>" class="field_label<?php if ($field->required) { echo ' field_required'; } ?>"><?php echo $field->name; ?></label>
 	<span class="field_help"><?php echo $field->description; ?></span>
-	
+	<?php echo form_error('fields['.$field->id.']'); ?>
 	<?php if ($field->type=="checkbox"): ?>
-		<?php echo form_error('fields['.$field->id.'][]'); ?>
 		<?php foreach ($field->options->getOptions() as $option_id=>$option): ?>
 			<div class="subfield">
 			<input id="fields<?php echo $field->id."-".$option_id; ?>" name="fields[<?php echo $field->id; ?>][]" type="checkbox" value="<?php echo $option; ?>" />
@@ -18,7 +20,6 @@
 			</div>
 		<?php endforeach ?>
 	<?php elseif ($field->type=="radio"): ?>
-		<?php echo form_error('fields['.$field->id.']'); ?>
 		<?php foreach ($field->options->getOptions() as $option_id=>$option): ?>
 			<div class="subfield">
 			<input id="fields<?php echo $field->id."-".$option_id; ?>" name="fields[<?php echo $field->id; ?>]" type="radio" value="<?php echo $option; ?>" /> 
@@ -26,16 +27,18 @@
 			</div>
 		<?php endforeach ?>
 	<?php elseif ($field->type=="dropdown"): ?>
-		<?php echo form_error('fields['.$field->id.']'); ?>
 		<select id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]">
 		<?php foreach ($field->options->getOptions() as $option): ?>
 			<option value="<?php echo $option; ?>" /> <?php echo $option; ?></option>
 		<?php endforeach ?>
 		</select>
+	<?php elseif ($field->type=="date"): ?> 
+		<input id="fieldsdate<?php echo $field->id; ?>" type="textbox" size="50" />
+		<input id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]" type="hidden" />
+		<script>$(document).ready(function(){ $("#fieldsdate<?php echo $field->id; ?>").datepicker({altField:'#fields<?php echo $field->id; ?>',altFormat:'yy-mm-dd'});});</script>
 	<?php elseif ($field->type=="textarea"): ?>
 		<textarea id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]" cols="30" rows="3"></textarea>
 	<?php else: // assume it's a text input ?>
-		<?php echo form_error('fields['.$field->id.']'); ?>
 		<input id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]" type="text" size="50" />
 	<?php endif ?>
 </div>

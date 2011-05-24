@@ -116,7 +116,8 @@ class FieldTypes  {
 		'textarea' => 'Textarea',
 		'checkbox' => 'Checkbox', 
 		'radio' => 'Radio', 
-		'dropdown' => 'Dropdown list'
+		'dropdown' => 'Dropdown list',
+		'date' => 'Date'
 		);
 	
 	public static function getValues()
