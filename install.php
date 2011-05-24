@@ -1,14 +1,25 @@
 <html>
 <head>
 <title>Install</title>
+
+<link rel="stylesheet" href="static/css/screen.css" />
+<style type="text/css">
+body { background-color: #CCCCCC; }
+#content_inner { margin-top: 25px; width: 350px; background-color: #FFFFFF; }
+input[type=submit] { display: block; }
+input[type=text], input[type=password] { width: 95%; height: 30px; }
+</style>
+
 </head>
 <body>
-INSTALL
+<div id="content_inner">
+<h2>INSTALL</h2>
 <?php
 if (isset($_POST['submit'])):
+	$templateFile = 'application/config/database.template.php';
 	$configFile = 'application/config/database.php';
-	$fh = fopen($configFile, 'rb'); 
-	$configData = fread($fh, filesize($configFile)); 
+	$fh = fopen($templateFile, 'rb'); 
+	$configData = fread($fh, filesize($templateFile)); 
 	fclose($fh); 
 
 	$s1 = '/db\[\'default\'\]\[\'';
@@ -30,32 +41,33 @@ if (isset($_POST['submit'])):
 	mysql_select_db($_POST['mysql_dbse']);
 	$schema = file_get_contents('application/core/schema.sql');
 	$sql = explode(';',$schema);
-	foreach ($sql as $query)
+	
+	echo '<pre>';
+	foreach (array_slice($sql, 0, -1) as $query)
 	{
-		echo mysql_query($query) ? '1' : '0';
+		echo mysql_query($query) ? 'Success' : mysql_error();
+		echo "\n";
 	}
+	echo '</pre>';
 ?>
-If this works, please delete this file for security!
-<?php
-else:
-?>
-<form action="" method="post">
-MySQL host:
-<input type="text" name="mysql_host" />
-MySQL user:
-<input type="text" name="mysql_user" />
-MySQL password:
-<input type="text" name="mysql_pass" />
-MySQL database:
-<input type="text" name="mysql_dbse" />
-<?php
-/* MySQL database prefix:
-<input type="text" name="mysql_dbpr" /> */
-?>
-<input type="submit" name="submit" />
-</form>
-<?php
-endif;
-?>
+	<p>If this works, please delete this file for security!</p>
+<?php else: ?>
+	<form action="" method="post">
+		<label class="field_label" for="mysql_host">MySQL host:</label>
+		<input type="text" id="mysql_host" name="mysql_host" />
+		<label class="field_label" for="mysql_user">MySQL user:</label>
+		<input type="text" id="mysql_user" name="mysql_user" />
+		<label class="field_label" for="mysql_pass">MySQL password:</label>
+		<input type="password" id="mysql_pass" name="mysql_pass" />
+		<label class="field_label" for="mysql_dbse">MySQL database:</label>
+		<input type="text" id="mysql_dbse" name="mysql_dbse" />
+		<?php
+		/* MySQL database prefix:
+		<input type="text" name="mysql_dbpr" /> */
+		?>
+		<input type="submit" name="submit" value="Install" />
+	</form>
+<?php endif; ?>
+</div>
 </body>
 </html>

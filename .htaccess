@@ -1,7 +1,7 @@
 Options +FollowSymLinks 
 RewriteEngine On
 
-RewriteCond $1 !(^index.php|^static)
+RewriteCond $1 !(^index.php|^static|^install.php)
 RewriteRule ^(.*)$ index.php/$1 [L]
 
 RewriteCond %{REQUEST_FILENAME} !-f
