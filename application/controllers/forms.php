@@ -57,10 +57,10 @@ class Forms extends CI_Controller {
 			foreach($form->fields as $field)
 			{
 				//Adding rules for validation based on field attributes
-				$rules = array();
+				$options = $field->options;
 				if ($field->required)
 				{
-					$rules[] = 'required';
+					$options->addRule('required');
 				}
 				
 				$input_name = 'fields['.$field->id.']';
@@ -69,7 +69,7 @@ class Forms extends CI_Controller {
 					$input_name .= '[]';
 				}
 				
-				$this->form_validation->set_rules($input_name, $field->name, implode('|', $rules));
+				$this->form_validation->set_rules($input_name, $field->name, $options->getSerialized());
 			}
 			
 			if ($this->form_validation->run() == FALSE)	//If validation rules have been violated
@@ -87,11 +87,12 @@ class Forms extends CI_Controller {
 				{
 					if (is_array($fields[$field->id]))
 					{
+						// need to use set_values
 						$value = Field::serializeValueArray($fields[$field->id]);
 					}
 					else
 					{
-						$value = $fields[$field->id];
+						$value = set_value('fields['.$field->id.']');
 					}
 				}
 				else

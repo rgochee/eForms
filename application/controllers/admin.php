@@ -59,8 +59,8 @@ class Admin extends CI_Controller {
 		{
 			//Form attribute validation
 			$this->form_validation->set_rules('name', 'Form name', 'required|trim|callback__unavailable_name');
-			$this->form_validation->set_rules('description', 'Form description', 'trim');
-
+			$this->form_validation->set_rules('description', 'Form description', 'trim|valid_values[zxcv]');
+			
 			$numFields = count($this->input->post('fields'));
 			
 			$name = $this->input->post('name');

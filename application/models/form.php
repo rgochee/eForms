@@ -2,6 +2,7 @@
 
 define('RULE_SEPARATOR', '|');
 define('OPT_SEPARATOR', '``');
+define('VALIDATION_FN', 'valid_values');
 
 class Form {
 	var $id;
@@ -52,6 +53,16 @@ class FieldOptions {
 		return $this->getSerialized();
 	}
 	
+	public function addRule($rule)
+	{
+		if (!in_array($rule, $this->rules))
+		{
+			$this->rules[] = $rule;
+		}
+	}
+	
+	// generally used when retrieving options from the database
+	// but can also be used to set rules in bulk
 	public function setOptions($data)
 	{
 		// treat all options as a rule
@@ -72,8 +83,7 @@ class FieldOptions {
 		// separate value options from the other rules
 		foreach ($this->rules as $index=>$rule)
 		{
-			if (preg_match_all('/valid_value\[(.*?)\]/', $rule, $matches) ||
-				preg_match_all('/values\[(.*?)\]/', $rule, $matches))
+			if (preg_match_all('/'.VALIDATION_FN.'\[(.*?)\]/', $rule, $matches))
 			{
 				$this->setValueOptions($matches[1][0]);
 				unset($this->rules[$index]);
@@ -105,22 +115,35 @@ class FieldOptions {
 		return $this->values;
 	}
 	
-	public function getSerialized()
+	private function getValuesRule()
 	{
-		$rulesStr = implode(RULE_SEPARATOR, $this->rules);
 		$valuesStr = Field::serializeValueArray($this->values);
-		
-		if (empty($rulesStr))
+		if (empty($valuesStr))
 		{
-			return $valuesStr;
-		}
-		else if (empty($valuesStr))
-		{
-			return $rulesStr;
+			return "";
 		}
 		else
 		{
-			return $rulesStr . RULE_SEPARATOR . 'valid_value[' . $valuesStr . ']';
+			return VALIDATION_FN.'['.$valuesStr.']';
+		}
+	}
+	
+	public function getSerialized()
+	{
+		$rulesStr = implode(RULE_SEPARATOR, $this->rules);
+		$valuesStr = $this->getValuesRule();
+		
+		if (empty($valuesStr))
+		{
+			return $rulesStr;
+		}
+		else if (empty($rulesStr))
+		{
+			return $valuesStr;
+		}
+		else
+		{
+			return $rulesStr.RULE_SEPARATOR.$valuesStr;
 		}
 	}
 }
