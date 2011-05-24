@@ -22,19 +22,12 @@ if (isset($_POST['submit'])):
 	$configData = fread($fh, filesize($templateFile)); 
 	fclose($fh); 
 
-	$s1 = '/db\[\'default\'\]\[\'';
-	$s1a = 'db[\'default\'][\'';
-	$s2 = '\'\] = \'';
-	$s2a = '\'] = \'';
-	$s3 = '[^\']*';
-	$s4 = '\';/im';
-	$s4a = '\';';
-
-	$configData = preg_replace($s1.'(hostname)'.$s2.$s3.$s4, $s1a.'$1'.$s2a.$_POST['mysql_host'].$s4a, $configData);
-	$configData = preg_replace($s1.'(username)'.$s2.$s3.$s4, $s1a.'$1'.$s2a.$_POST['mysql_user'].$s4a, $configData);
-	$configData = preg_replace($s1.'(password)'.$s2.$s3.$s4, $s1a.'$1'.$s2a.$_POST['mysql_pass'].$s4a, $configData);
-	$configData = preg_replace($s1.'(database)'.$s2.$s3.$s4, $s1a.'$1'.$s2a.$_POST['mysql_dbse'].$s4a, $configData);
-	//$configData = preg_replace($s1.'(dbprefix)'.$s2.$s3.$s4, $s1a.'$1'.$s2a.$_POST['mysql_dbpr'].$s4a, $configData);
+	$configData = str_replace('{{HOSTNAME}}', $_POST['mysql_host'], $configData);
+	$configData = str_replace('{{USERNAME}}', $_POST['mysql_user'], $configData);
+	$configData = str_replace('{{PASSWORD}}', $_POST['mysql_pass'], $configData);
+	$configData = str_replace('{{DATABASE}}', $_POST['mysql_dbse'], $configData);
+	//$configData = str_replace('{{DBPREFIX}}', $_POST['mysql_dbpr'], $configData);
+	
 	file_put_contents($configFile, $configData);
 
 	$link = mysql_connect($_POST['mysql_host'], $_POST['mysql_user'], $_POST['mysql_pass']);
