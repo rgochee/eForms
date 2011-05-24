@@ -29,6 +29,8 @@
 			<option value="<?php echo $option; ?>" /> <?php echo $option; ?></option>
 		<?php endforeach ?>
 		</select>
+	<?php elseif ($field->type=="textarea"): ?>
+		<textarea id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]" cols="30" rows="3"></textarea>
 	<?php else: // assume it's a text input ?>
 		<input id="fields<?php echo $field->id; ?>" name="fields[<?php echo $field->id; ?>]" type="text" size="50" />
 	<?php endif ?>

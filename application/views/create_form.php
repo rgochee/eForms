@@ -82,6 +82,7 @@ $(document).ready(function() {
 		
 		switch (type) {
 			case "textbox": 
+			case "textarea": 
 				$(this).siblings('.options').hide();
 			break;
 			case "dropdown":

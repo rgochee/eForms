@@ -113,6 +113,7 @@ class FieldTypes  {
 	
 	private static $types = array(
 		'textbox' => 'Text', 
+		'textarea' => 'Textarea',
 		'checkbox' => 'Checkbox', 
 		'radio' => 'Radio', 
 		'dropdown' => 'Dropdown list'
