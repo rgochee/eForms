@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `Fields` (
   `field_id` int(11) NOT NULL auto_increment,
   `field_name` varchar(80) NOT NULL,
   `form_id` int(11) NOT NULL,
-  `field_type` enum('textbox','checkbox','radio','dropdown','textarea') NOT NULL,
+  `field_type` varchar(20) NOT NULL,
   `field_options` text NOT NULL,
   `field_required` tinyint(1) NOT NULL,
   `field_description` text NOT NULL,
@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `Filled_Forms` (
   `form_id` int(11) NOT NULL,
   `user` varchar(20) NOT NULL,
   `time` int(13) NOT NULL,
+  `status` tinyint(1) NOT NULL,
   PRIMARY KEY  (`instance_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 

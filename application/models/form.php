@@ -72,7 +72,8 @@ class FieldOptions {
 		// separate value options from the other rules
 		foreach ($this->rules as $index=>$rule)
 		{
-			if (preg_match_all('/valid_value\[(.*?)\]/', $rule, $matches))
+			if (preg_match_all('/valid_value\[(.*?)\]/', $rule, $matches) ||
+				preg_match_all('/values\[(.*?)\]/', $rule, $matches))
 			{
 				$this->setValueOptions($matches[1][0]);
 				unset($this->rules[$index]);

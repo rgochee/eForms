@@ -50,6 +50,10 @@ class Forms extends CI_Controller {
 			$user = $this->input->post('user');
 			$fields = $this->input->post('fields');
 			
+			// fool CI form validation to think form has been submitted
+			$_POST['username'] = 'Nick';
+			$this->form_validation->set_rules('username', 'Username', '');
+			
 			foreach($form->fields as $field)
 			{
 				//Adding rules for validation based on field attributes
@@ -58,8 +62,16 @@ class Forms extends CI_Controller {
 				{
 					$rules[] = 'required';
 				}
-				$this->form_validation->set_rules('fields['.$field->id.']', $field->name, implode('|', $rules));
+				
+				$input_name = 'fields['.$field->id.']';
+				if ($field->type === "checkbox")
+				{
+					$input_name .= '[]';
+				}
+				
+				$this->form_validation->set_rules($input_name, $field->name, implode('|', $rules));
 			}
+			
 			if ($this->form_validation->run() == FALSE)	//If validation rules have been violated
 			{
 				$this->load->view('header', array('title'=>'- '.$form->name));
