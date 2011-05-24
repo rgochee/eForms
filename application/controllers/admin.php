@@ -59,7 +59,7 @@ class Admin extends CI_Controller {
 		{
 			//Form attribute validation
 			$this->form_validation->set_rules('name', 'Form name', 'required|trim|callback__unavailable_name');
-			$this->form_validation->set_rules('description', 'Form description', 'trim|valid_values[zxcv]');
+			$this->form_validation->set_rules('description', 'Form description', 'trim');
 			
 			$numFields = count($this->input->post('fields'));
 			
@@ -116,6 +116,42 @@ class Admin extends CI_Controller {
 
 		$this->load->view('footer');
 	}
+	
+	public function edit($form_id)
+	{
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		
+		$this->load->library('FormsDB');
+		$form = $this->formsdb->getForm($form_id);
+		
+		$_POST['name'] = $form->name;
+		$_POST['description'] = $form->description;
+		$this->form_validation->set_rules('name', 'Form name', 'required|trim');
+		$this->form_validation->set_rules('description', 'Form description', 'trim');
+		
+		$fields = array();
+		foreach ($form->fields as $i=>$field) //for each array of field info in the array of fields
+		{
+			$_POST['fields'][$i]['name'] = $field->name;
+			$_POST['fields'][$i]['description'] = $field->description;
+			$_POST['fields'][$i]['type'] = $field->type;
+			$_POST['fields'][$i]['required'] = $field->required;
+			
+			$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', 'trim|required');
+			$this->form_validation->set_rules('fields['.$i.'][description]', 'help text', 'trim');
+			$this->form_validation->set_rules('fields['.$i.'][type]', 'type', 'callback__fieldTypeCheck');
+			$this->form_validation->set_rules('fields['.$i.'][required]', 'field requirement', '');
+			$this->form_validation->set_rules('fields['.$i.'][options][]', 'field option', 'trim|callback__separatorCheck');
+		}
+		$this->form_validation->run();
+		
+		$this->load->view('header', array('title'=>'- Edit Form'));
+		$this->load->view('create_form', array('numFields'=>count($form->fields)));
+		$this->load->view('footer');
+	}
 
 	public function data($form_id)
 	{
@@ -152,7 +188,7 @@ class Admin extends CI_Controller {
 			array_push($responses, $response);
 		}
 
-		$this->load->view('form_data', array('form_name'=>$form_name, 'fields'=>$fields, 'data'=>$responses));
+		$this->load->view('form_data', array('form_id'=>$form_id, 'form_name'=>$form_name, 'fields'=>$fields, 'data'=>$responses));
 		$this->load->view('footer');
 	}
 
