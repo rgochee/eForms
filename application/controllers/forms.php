@@ -57,10 +57,10 @@ class Forms extends CI_Controller {
 			foreach($form->fields as $field)
 			{
 				//Adding rules for validation based on field attributes
-				$rules = array();
+				$options = $field->options;
 				if ($field->required)
 				{
-					$rules[] = 'required';
+					$options->addRule('required');
 				}
 				
 				$input_name = 'fields['.$field->id.']';
@@ -69,7 +69,7 @@ class Forms extends CI_Controller {
 					$input_name .= '[]';
 				}
 				
-				$this->form_validation->set_rules($input_name, $field->name, implode('|', $rules));
+				$this->form_validation->set_rules($input_name, $field->name, $options->getSerialized());
 			}
 			
 			if ($this->form_validation->run() == FALSE)	//If validation rules have been violated
@@ -83,18 +83,24 @@ class Forms extends CI_Controller {
 			$datas = array();
 			foreach($form->fields as $field)
 			{
-				if (!isset($fields[$field->id]))	//If it wasn't required and isn't filled in
+				if (isset($fields[$field->id]))
 				{
-					$fields[$field->id] = '';	//Make the value empty
+					if (is_array($fields[$field->id]))
+					{
+						// need to use set_values
+						$value = Field::serializeValueArray($fields[$field->id]);
+					}
+					else
+					{
+						$value = set_value('fields['.$field->id.']');
+					}
 				}
-				$value = $fields[$field->id];
+				else
+				{
+					$value = '';
+				}
 				
-				if (is_array($value))	//If the answer is an array of options
-				{
-					$fOptions = new ValueOptions($value);
-					$fields[$field->id] = $fOptions->getSerialized();
-				}
-				$datas[$field->id] = $fields[$field->id];
+				$datas[$field->id] = $value;
 			}
 			//No errors have occured, data can be inserted successfully
 			$instanceid = $this->formsdb->addFilledForm($form->id, $user, $datas);

@@ -14,5 +14,11 @@ class EF_Form_validation extends CI_Form_validation {
 			return 1;
 		}
 	}
+	
+	function valid_values($str, $val)
+	{
+		$this->set_message('valid_values', 'Invalid value.');
+		return TRUE;
+	}
 
 }
