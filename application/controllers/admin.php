@@ -83,6 +83,7 @@ class Admin extends CI_Controller {
 				
 				$options = new FieldOptions();
 				$options->setValueOptions($fieldAttributes['options']);
+				$options->setOptions($fieldAttributes['validation']);
 				$field->options = $options;
 				$field->required = isset($fieldAttributes['required']);
 				$field->description = $fieldAttributes['description'];
@@ -151,6 +152,169 @@ class Admin extends CI_Controller {
 		$this->load->view('header', array('title'=>'- Edit Form'));
 		$this->load->view('create_form', array('numFields'=>count($form->fields)));
 		$this->load->view('footer');
+	}
+	
+	public function _collapseParamedRules($ruleNames)
+	{
+		$subRules = array();
+		foreach ($ruleNames as $ruleName)
+		{
+			$value = set_value($ruleName);
+			if ($value != "")
+			{
+				$subRules[] = $ruleName . '[' . $value . ']';
+			}
+		}
+		return implode(RULE_SEPARATOR, $subRules);
+	}
+	
+	public function validation() {
+		$phoneFormats = array('1 (123) 456-7890', '1 123 456 7890', '1-123-456-7890', '11234567890');
+		$charVType = 'char';
+		$validationTypes = array(
+			$charVType => 'Specific characters',
+			'alpha' => 'Alphabet',
+			'alpha_numeric' => 'Alphanumeric',
+			'valid_email' => 'E-mail',
+			'integer' => 'Number',
+			'phone_format' => 'Phone Number (US)'
+		);
+		$this->load->helper('form');
+		$this->load->library('form_validation');
+		$this->load->library('formsdb');
+		
+		// set defaults if unset
+		$defaults = array('vtype' => $charVType, 'chars' => 'disallow', 'phone_format' => 0);
+		foreach ($defaults as $fname=>$value)
+		{
+			if (!isset($_POST[$fname])) 
+			{
+				$_POST[$fname] = $value;
+			}
+		}
+		
+		// rules with 1 parameter
+		$paramedRules = array('min_length', 'max_length', 'less_than', 'greater_than', 'phone_format');
+		
+		// set rules
+		foreach ($paramedRules as $ruleName)
+		{
+			$this->form_validation->set_rules($ruleName, $ruleName, '');
+		}
+		$this->form_validation->set_rules('vtype', 'validation type', '');
+		$this->form_validation->set_rules('phone_format', 'character allowance/disallowance', '');
+		$this->form_validation->set_rules('chars', 'character allowance/disallowance', '');
+		$this->form_validation->set_rules('chars_spec', 'character allowance/disallowance', '');
+		
+		// parse validation rules
+		if ($this->input->post('rules') !== FALSE) 
+		{
+			$rulesStr = $this->input->post('rules');
+			foreach ($paramedRules as $ruleName)
+			{
+				if (preg_match('/'.$ruleName.'\[([^\]]*)\]/', $rulesStr, $match)) 
+				{
+					$_POST[$ruleName] = $match[1];
+				}
+			}
+			
+			$rules = explode(RULE_SEPARATOR, $rulesStr);
+			foreach ($validationTypes as $ruleName=>$niceName)
+			{
+				if ($ruleName != $charVType && array_search($ruleName, $rules) !== FALSE) {
+					$_POST['vtype'] = $ruleName;
+					break;
+				}
+			}
+		}
+		
+		if ($this->form_validation->run() !== FALSE && $this->input->post('rules') === FALSE) 
+		{
+			$newRuleSet = array();
+			$prettyRuleString = "";
+			
+			$lengthValidation = $this->_collapseParamedRules(array('min_length', 'max_length'));
+			if ($lengthValidation !== "") 
+			{
+				$newRuleSet[] = $lengthValidation;
+				if (set_value('min_length') != "")
+				{
+					$prettyRuleString .= "Must be at least " . set_value('min_length') . " characters. ";
+				}
+				if (set_value('max_length') != "")
+				{
+					$prettyRuleString .= "Must be at most " . set_value('max_length') . " characters. ";
+				}
+			}
+			
+			switch (set_value('vtype'))
+			{
+			case $charVType:
+				$charList = str_replace(' ', OPT_SEPARATOR, set_value('char_specs'));
+				$niceList = str_replace(' ', '", "', set_value('char_specs'));
+				switch (set_value('chars'))
+				{
+				case 'allow':
+					$subRules[] = 'contains_only' . '[' . set_value($ruleName) . ']';
+					if ($niceList != "")
+					{
+						$prettyRuleString .= 'Can only contain "' . $niceList . '". ';
+					}
+					break;
+				case 'disallow':
+					$subRules[] = 'restricted_chars' . '[' . set_value($ruleName) . ']';
+					if ($niceList != "")
+					{
+						$prettyRuleString .= 'Cannot contain ' . $niceList . '. ';
+					}
+					else
+					{
+						$prettyRuleString .= 'Can contain anything. ';
+					}
+					break;
+				}
+				break;
+			case 'integer':
+				$newRuleSet[] = 'integer';
+				$newRuleSet[] = $this->_collapseParamedRules(array('greater_than', 'less_than'));
+				$prettyRuleString .= 'Must be a number';
+				if (set_value('greater_than') != "")
+				{
+					$prettyRuleString .= ' greater than ' . set_value('greater_than');
+				}
+				if (set_value('less_than') != "")
+				{
+					$prettyRuleString .= ' less than ' . set_value('less_than');
+				}
+				$prettyRuleString .= '. ';
+				break;
+			case 'phone_format':
+				$newRuleSet[] = $this->_collapseParamedRules(array('phone_format'));
+				$prettyRuleString .= 'Must be a phone number (normalized as ' . $phoneFormats . '). ';
+				break;
+			default:
+				$asIsRules = array(
+					'alpha' => 'Can only contain the alphabet. ', 
+					'alpha_numeric' => 'Can only contain alphanumeric characters. ', 
+					'valid_email' => 'Must be a valid email. ');
+				
+				if (array_search(set_value('vtype'), array_keys($asIsRules)) !== FALSE)
+				{
+					$newRuleSet[] = set_value('vtype');
+					$prettyRuleString .= $asIsRules[set_value('vtype')];
+				}
+			}
+			
+			$uglyRuleString = str_replace('"', "\\\"", implode('|', $newRuleSet));
+			$prettyRuleString = str_replace('"', "\\\"", $prettyRuleString);
+			printf('{"rules": "%s", "pretty": "%s"}', $uglyRuleString, $prettyRuleString);
+			return;
+		}
+		
+		$this->load->view('validation_form', array(
+			'phoneFormats' => $phoneFormats,
+			'validationTypes' => $validationTypes
+		));
 	}
 
 	public function data($form_id)

@@ -43,18 +43,22 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 <div id="field_tpl" style="display: none;">
 	<?php $this->load->view('edit_field', array('field_id'=>'{{index}}', 'field'=>array())); ?>
 </div>
-	
+
+<div id="validationDlg"></div>
+
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/themes/smoothness/jquery-ui.css" type="text/css" />
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
 <script type="text/javascript">
 
 $(document).ready(function() {
 	$('#add_field').click(function(e) {
 		e.preventDefault();
 		
-		var tpl = $('#field_tpl').html(),
-			index = $('#fields').children().length,
+		var tpl = $('#field_tpl').html();
+		var index = $('#fields').children().length;
 			
-			html = tpl.replace(/{{index}}/g, index);
+		var html = tpl.replace(/{{index}}/g, index);
 		$(html)
 			.appendTo('#fields')
 			.children('input:first')
@@ -63,22 +67,22 @@ $(document).ready(function() {
 	$('.add_option').live('click', function(e) {
 		e.preventDefault();
 		
-		var ul = $(this).parent(),
-			html = ul.children(':first').clone();
+		var ul = $(this).parent();
+		var html = ul.children(':first').clone();
 		html.children('input').val("");
 		$(this).before(html);
 	});
 	$('.delete_btn').live('click', function(e) {
 		e.preventDefault();
 		
-		var li = $(this).parent(),
-			ul = li.parent();
+		var li = $(this).parent();
+		var ul = li.parent();
 		if (ul.children('li').length > 1)
 			li.remove();
 	});
 	$('.type_select').live('change', function(e) {
-		var type = $(this).val(),
-			dummy = "";
+		var type = $(this).val();
+		var dummy = "";
 		
 		switch (type) {
 			case "textbox": 
@@ -110,6 +114,49 @@ $(document).ready(function() {
 			fieldDiv.addClass('editingField');
 		}
 	});
+	
+	$('#validationDlg').dialog({
+		title: 'Validation',
+		position: ['center', 150],
+		width: 400,
+		modal: true,
+		autoOpen: false
+	});
+	$('.add_validation').live('click', function() {
+		var url = this.href;
+		var field_id = $(this).closest('.field').attr('id').substring(6);
+		var rulesStr = $(this).closest('.validation').find('input[type=hidden]').val();
+		var dialog = $('#validationDlg');
+		dialog.data('fid', field_id);
+		
+		dialog.load(url, {rules: rulesStr}, function() {
+			dialog.dialog('open');
+			$('#validation_type').trigger('change');
+		});
+		return false;
+	});
+	$('#validation_type').live('change', function() {
+		var opt = $(this).val();
+		$('.selected_opts').removeClass('selected_opts');
+		$('#'+opt+'_opts').addClass('selected_opts');
+	});
+	$('#validation_form').live('submit', function() {
+		var url = $(this).attr('action');
+		var data = $(this).serialize();
+		$.post(url, data, function(data) {
+			var validationResult = $.parseJSON(data);
+			var field_id = $('#validationDlg').data('fid');
+			var validationList = $('.validation:eq('+field_id+')')
+			validationList.find('.pretty_rules')
+					.text(validationResult['pretty']);
+			validationList.find('input[type=hidden]')
+					.val(validationResult['rules']);
+			$('#validationDlg').dialog('close');
+		});
+	
+		return false;
+	});
+
 });
 
 </script>
