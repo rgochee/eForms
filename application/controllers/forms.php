@@ -19,10 +19,19 @@ class Forms extends CI_Controller {
 		$this->load->view('footer');
 	}
 	
-	public function browse()
+	public function browse($start = 0)
 	{
+		$per_page = 20;
 		$this->load->library('FormsDB');
-		$data = array('forms' => $this->formsdb->getForms());
+		$this->load->library('pagination');
+
+		$this->pagination->initialize(array(
+			'base_url' => base_url() . '/forms/browse/',
+			'total_rows' => $this->formsdb->getNumForms(),
+			'per_page' => $per_page
+		));
+
+		$data = array('forms' => $this->formsdb->getForms($per_page, $start, FormsDB::SORT_NAME));
 		$this->load->view('header', array('title'=>'- Browse Forms'));
 		$this->load->view('forms_list', $data);
 		$this->load->view('footer');
@@ -51,8 +60,6 @@ class Forms extends CI_Controller {
 			$fields = $this->input->post('fields');
 			
 			// fool CI form validation to think form has been submitted
-			$_POST['username'] = 'Nick';
-			$this->form_validation->set_rules('username', 'Username', '');
 			
 			foreach($form->fields as $field)
 			{

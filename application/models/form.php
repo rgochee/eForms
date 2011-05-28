@@ -9,7 +9,7 @@ class Form {
 	var $name;
 	var $description;
 	var $user;
-	var $time;
+	var $time_created;
 	var $disabled;
 	var $fields;
 }

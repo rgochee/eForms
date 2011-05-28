@@ -77,6 +77,12 @@ class FormsDB {
 		return $query->num_rows() != 0;
 	}
 	
+	function getNumForms() 
+	{
+		$query = $this->CI->db->get('Forms');
+		return $query->num_rows(); 
+	}
+	
 	// return value: Form object with form structure info
 	function getForm($form_id)
 	{
@@ -164,6 +170,7 @@ class FormsDB {
 			$form->user = $row->user;
 			$form->disabled = $row->form_disabled;
 			$form->fields = NULL;
+			$form->time_created = $row->time_created;
 			
 			$return[] = $form;
 		}
