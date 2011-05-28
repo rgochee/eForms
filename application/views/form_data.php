@@ -8,8 +8,7 @@ table, th, td { border: 1px solid #bbb; }
 
 <h2>"<?php echo $form_name; ?>" Data</h2>
 
-<?php $urlName = '/' . str_replace(' ', '-', strtolower($form_name)); ?>
-<p><?php echo anchor('forms/fill/' . $form_id . $urlName, "Go to form", 'title="View the form"'); ?></p>
+<p><?php echo anchor(niceFormUri('forms/fill/', $form_id, $form_name), "Go to form", 'title="View the form"'); ?></p>
 
 <table cellspacing="0">
 	<tr>
