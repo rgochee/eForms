@@ -115,6 +115,16 @@ class FieldOptions {
 		return $this->values;
 	}
 	
+	public function getRulesString()
+	{
+		$last = array_pop($this->rules);
+		if (!empty($last))
+		{
+			$this->rules[] = $last;
+		}
+		return implode(RULE_SEPARATOR, $this->rules);
+	}
+	
 	private function getValuesRule()
 	{
 		$valuesStr = Field::serializeValueArray($this->values);
@@ -130,7 +140,7 @@ class FieldOptions {
 	
 	public function getSerialized()
 	{
-		$rulesStr = implode(RULE_SEPARATOR, $this->rules);
+		$rulesStr = $this->getRulesString();
 		$valuesStr = $this->getValuesRule();
 		
 		if (empty($valuesStr))

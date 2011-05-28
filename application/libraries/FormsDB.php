@@ -28,8 +28,7 @@ class FormsDB {
 		
 		if ($this->CI->db->affected_rows() == 0)
 		{
-			$error = 'Insert to Forms failed: ' . $this->CI->db->_error_message();
-			log_message('error', $error);
+			$this->_logDbError('Insert to Forms failed');
 			return FALSE;
 		}
 		
@@ -51,12 +50,10 @@ class FormsDB {
 		}
 		
 		$this->CI->db->insert_batch('Fields', $db_fields);
-		// if there's an error, undo all inserts
 		if ($this->CI->db->affected_rows() < count($fields))
 		{
-			$error = 'Insert to Fields failed: ' . $this->CI->db->_error_message();
-			log_message('error', $error);
-			$this->deleteForm($form_id);
+			$this->_logDbError('Insert to Fields failed');
+			$this->deleteForm($form_id); // revert changes
 			return FALSE;
 		}
 		
@@ -215,9 +212,9 @@ class FormsDB {
 		return false;
 	}
 	
-	function editField($field_id, $field)
+	function editField($form_id, $field_id, $field)
 	{
-		$data = array(
+		$field = array(
 			'field_name' => $field->name,
 			'field_type' => $field->type,
 			'field_options' => $field->options->getSerialized(),
@@ -225,16 +222,17 @@ class FormsDB {
 			'field_description' => $field->description
 		);
 		
-		$this->CI->db->update('Fields', $data, array('field_id' => $field_id)); 
-		$affected = $this->CI->db->affected_rows();
-		if ($affected == 0)
+		$this->CI->db->where(array('form_id' => $form_id, 'field_id' => $field_id));
+		$this->CI->db->update('Fields', $field); $this->CI->db->last_query();
+		// can't use affected rows == 0 check
+		// affected rows is 0 when the field attributes are the same
+		if ($this->CI->db->_error_message() != "")
 		{
-			$errorMsg = 'Editing field '.$field_id.' failed: ' . $this->CI->db->_error_message();
-			log_message('error', $errorMsg);
+			$this->_logDbError('Editing field '.$field_id.' failed');
 			return FALSE;
 		}
 		
-		return $affected;
+		return $this->CI->db->affected_rows();
 	}
 	
 	function addField($form_id, $field, $order = -1)
@@ -255,8 +253,7 @@ class FormsDB {
 		$this->CI->db->insert('Fields', $field);
 		if ($this->CI->db->affected_rows() == 0)
 		{
-			$errorMsg = 'Cannot add field: ' . $this->CI->db->_error_message();
-			log_message('error', $errorMsg);
+			$this->_logDbError('Cannot add field: ');
 			return FALSE;
 		}
 		
@@ -275,7 +272,7 @@ class FormsDB {
 		$query = $this->CI->db->get();
 		if ($query->num_rows() == 0)
 		{
-			log_message('error', 'field doesn\'t exist');
+			log_message('error', 'Field doesn\'t exist');
 			return FALSE;
 		}
 		
@@ -303,10 +300,9 @@ class FormsDB {
 		$this->CI->db->set('field_order', 'field_order'.$shift, FALSE);
 		$this->CI->db->update('Fields');
 		$numShifted = $this->CI->db->affected_rows();
-		if ($numShifted == 0&&false)
+		if ($numShifted == 0)
 		{
-			$errorMsg = 'Adding 1 to field_orders failed: ' . $this->CI->db->_error_message();
-			log_message('error', $errorMsg);
+			$this->_logDbError('Adding 1 to field_orders failed');
 			return FALSE;
 		}
 		
@@ -320,11 +316,18 @@ class FormsDB {
 		$fieldMoved = $this->CI->db->affected_rows();
 		if ($fieldMoved == 0)
 		{
-			$errorMsg = 'Moving field failed: ' . $this->CI->db->_error_message();
-			log_message('error', $errorMsg);
+			$this->_logDbError('Moving field failed');
 			return FALSE;
 		}
 		return $numShifted + $fieldMoved;
+	}
+	
+	private function _logDbError($message)
+	{
+		$errorMsg = $message . ' on "' . $this->CI->db->last_query() . '"';
+		$errorMsg .= "\n" . $this->CI->db->_error_message();
+		log_message('error', $errorMsg);
+	
 	}
 }
 
