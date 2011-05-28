@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Admin extends CI_Controller {
+class Admin extends EF_Controller {
 
 	public function __construct() {
 		parent::__construct();
@@ -44,6 +44,7 @@ class Admin extends CI_Controller {
 
 	public function create()
 	{
+		$this->setTitle('Create Form');
 		$this->load->helper('form');
 		$this->load->library('form_validation');
 		
@@ -52,7 +53,7 @@ class Admin extends CI_Controller {
 		$requestType = $this->input->server('REQUEST_METHOD');
 		if ($requestType == 'GET') //If get request, creating new form
 		{
-			$this->load->view('header', array('title'=>'- Create Form'));
+			$this->load->view('header');
 			$this->load->view('create_form', array('numFields'=>1));
 		}
 		else if ($requestType == 'POST') //Else if post request, adding newly created form to database
@@ -92,7 +93,7 @@ class Admin extends CI_Controller {
 			
 			if ($this->form_validation->run() == FALSE)	// If some inputs are invalid
 			{
-				$this->load->view('header', array('title'=>'- Create Form'));
+				$this->load->view('header');
 				$this->load->view('create_form', array('numFields'=>$numFields));
 				$this->load->view('footer');
 				return;
@@ -104,15 +105,16 @@ class Admin extends CI_Controller {
 			
 			if (!$form_id)	// If the insert failed
 			{
-				$this->load->view('header', array('title'=>'- Create Form'));
+				$this->load->view('header');
 				$this->load->view('create_form', array('numFields'=>$numFields));
 				$this->load->view('footer');
 				return;
 			}
 			
 			//If there are no errors
+			$this->setTitle('Success!');
 			$this->load->helper('text_helper');
-			$this->load->view('header', array('title'=>'- Success!'));
+			$this->load->view('header');
 			$this->load->view('create_success', array('form_name'=>$name, 'form_id'=>$form_id));
 		}
 
@@ -192,15 +194,15 @@ class Admin extends CI_Controller {
 		$data =  array();
 		
 		$form = $this->formsdb->getForm($form_id);
+		$_POST['validate'] = TRUE; // set_rules do not work without initial POST data
 		
+		$data['numFields'] = max(count($form->fields), count($this->input->post('fields')));
 		$this->form_validation->set_rules('name', 'Form name', 'required|trim');
 		$this->form_validation->set_rules('description', 'Form description', 'trim');
-		foreach ($this->input->post('fields') as $i=>$fieldAttrs)
+		for ($i=0; $i<$data['numFields']; $i++)
 		{
 			$this->_setFieldEditValidation($i);
 		}
-		
-		$data['numFields'] = max(count($form->fields), count($this->input->post('fields')));
 		
 		$requestType = $this->input->server('REQUEST_METHOD');
 		if ($requestType == "GET")
@@ -217,7 +219,8 @@ class Admin extends CI_Controller {
 			$data['success'] = TRUE;
 		}
 		
-		$this->load->view('header', array('title'=>'- Edit Form'));
+		$this->setTitle('Edit Form');
+		$this->load->view('header');
 		$this->load->view('create_form', $data);
 		$this->load->view('footer');
 	}

@@ -32,3 +32,8 @@ function niceFormUri($uri, $form_id, $form_name)
 	return $uri . $form_id . '/' . $urlName;
 }
 
+function getTitle() {
+	$CI =& get_instance();
+	return $CI->getTitle();
+}
+

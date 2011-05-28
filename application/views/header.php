@@ -2,26 +2,26 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>eForms <?=tryPrint($title)?></title>
+<title><?php echo getTitle(); ?></title>
 
-<link rel="stylesheet" href="<?= base_url() ?>static/css/screen.css"/>
+<link rel="stylesheet" href="<?php echo base_url(); ?>static/css/screen.css"/>
 
 </head>
 <body>
 
 <div id="header">
-    <h1 id="logo"><a href="<?= base_url() ?>">eForms</a></h1>
+    <h1 id="logo"><a href="<?php echo base_url(); ?>">eForms</a></h1>
 </div>
 
 <div id="content">
     <div id="toolbar">
         <div id="menubar" class="left">
-            <?= anchor('', 'Home', 'title="Home page"') ?>
-            <?= anchor('forms/browse', 'Browse', 'title="Browse all of the forms"') ?>
+            <?php echo anchor('', 'Home', 'title="Home page"'); ?>
+            <?php echo anchor('forms/browse', 'Browse', 'title="Browse all of the forms"'); ?>
 
             <?php if($this->session->userdata('admin')): ?>
-            <?= anchor('admin/create', 'Create', 'title="Create a form"') ?>
-            <?php endif ?>
+            <?php echo anchor('admin/create', 'Create', 'title="Create a form"'); ?>
+            <?php endif; ?>
         </div>
         <div class="right">
             <form action="" method="get">

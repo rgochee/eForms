@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Forms extends CI_Controller {
+class Forms extends EF_Controller {
 
 	public function __construct() {
 		parent::__construct();
@@ -11,7 +11,8 @@ class Forms extends CI_Controller {
 	
 	public function index()
 	{
-		$this->load->view('header', array('title'=>'- Index'));
+		$this->setTitle('Index');
+		$this->load->view('header');
 		$this->load->helper('file');
 		$newsFile = read_file('NEWS');
 		$newsItems = explode("\n* ", $newsFile);
@@ -33,7 +34,8 @@ class Forms extends CI_Controller {
 		));
 
 		$data = array('forms' => $this->formsdb->getForms($per_page, $start, FormsDB::SORT_TIME));
-		$this->load->view('header', array('title'=>'- Browse Forms'));
+		$this->setTitle('Browse Forms');
+		$this->load->view('header');
 		$this->load->view('forms_list', $data);
 		$this->load->view('footer');
 	}
@@ -46,17 +48,18 @@ class Forms extends CI_Controller {
 
 		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 		
+		$form = $this->formsdb->getForm($form_id);
+		$this->setTitle($form->name);
+			
 		$requestType = $this->input->server('REQUEST_METHOD');
 		if ($requestType == 'GET') //If get request, ready to fill out the form
 		{
-			$form = $this->formsdb->getForm($form_id);
-			$this->load->view('header', array('title'=>'- '.$form->name));
+			$this->load->view('header');
 			$this->load->view('fill_form', array('form'=>$form));
 			$this->load->view('footer');
 		}
 		else if ($requestType == 'POST') //Else if post request, adding filled form data
 		{
-			$form = $this->formsdb->getForm($form_id);
 			$user = $this->input->post('user');
 			$fields = $this->input->post('fields');
 			
@@ -82,7 +85,7 @@ class Forms extends CI_Controller {
 			
 			if ($this->form_validation->run() == FALSE)	//If validation rules have been violated
 			{
-				$this->load->view('header', array('title'=>'- '.$form->name));
+				$this->load->view('header');
 				$this->load->view('fill_form', array('form'=>$form));
 				$this->load->view('footer');
 				return;
@@ -113,7 +116,8 @@ class Forms extends CI_Controller {
 			//No errors have occured, data can be inserted successfully
 			$instanceid = $this->formsdb->addFilledForm($form->id, $user, $datas);
 			
-			$this->load->view('header', array('title'=>'- Success!'));
+			$this->setTitle('Success!');
+			$this->load->view('header');
 			$this->load->view('fill_success');
 			$this->load->view('footer');
 		}
