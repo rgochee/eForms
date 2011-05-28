@@ -2,6 +2,9 @@
 
 class Admin extends EF_Controller {
 
+	const CREATE = "Create";
+	const EDIT = "Edit";
+
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('session');
@@ -12,8 +15,7 @@ class Admin extends EF_Controller {
 
 	public function index()
 	{
-		$this->load->view('header');
-		$this->load->view('footer');
+		redirect('forms/index');
 	}
 	
 	public function _unavailable_name($form_name)
@@ -49,12 +51,14 @@ class Admin extends EF_Controller {
 		$this->load->library('form_validation');
 		
 		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		
+		$data = array('action' => Admin::CREATE, 'numFields' => 1);
 
 		$requestType = $this->input->server('REQUEST_METHOD');
 		if ($requestType == 'GET') //If get request, creating new form
 		{
 			$this->load->view('header');
-			$this->load->view('create_form', array('numFields'=>1));
+			$this->load->view('create_form', $data);
 		}
 		else if ($requestType == 'POST') //Else if post request, adding newly created form to database
 		{
@@ -62,7 +66,7 @@ class Admin extends EF_Controller {
 			$this->form_validation->set_rules('name', 'Form name', 'required|trim|callback__unavailable_name');
 			$this->form_validation->set_rules('description', 'Form description', 'trim');
 			
-			$numFields = count($this->input->post('fields'));
+			$data['numFields'] = count($this->input->post('fields'));
 			
 			$name = $this->input->post('name');
 			$description = $this->input->post('description');
@@ -94,7 +98,7 @@ class Admin extends EF_Controller {
 			if ($this->form_validation->run() == FALSE)	// If some inputs are invalid
 			{
 				$this->load->view('header');
-				$this->load->view('create_form', array('numFields'=>$numFields));
+				$this->load->view('create_form', $data);
 				$this->load->view('footer');
 				return;
 			}
@@ -106,7 +110,7 @@ class Admin extends EF_Controller {
 			if (!$form_id)	// If the insert failed
 			{
 				$this->load->view('header');
-				$this->load->view('create_form', array('numFields'=>$numFields));
+				$this->load->view('create_form', $data);
 				$this->load->view('footer');
 				return;
 			}
@@ -129,6 +133,13 @@ class Admin extends EF_Controller {
 		$this->form_validation->set_rules('fields['.$index.'][type]', 'type', 'callback__fieldTypeCheck');
 		$this->form_validation->set_rules('fields['.$index.'][required]', 'field requirement', '');
 		$this->form_validation->set_rules('fields['.$index.'][options][]', 'field option', 'trim|callback__separatorCheck');
+	}
+	
+	public function deleteField($form_id, $field_id)
+	{
+		$this->load->library('FormsDB');
+		$field_name = $this->formsdb->disableField($form_id, $field_id);
+		echo $field_name . " deleted.";
 	}
 	
 	private function loadFormFromDatabase($form_id, $form)
@@ -191,7 +202,7 @@ class Admin extends EF_Controller {
 		
 		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 		
-		$data =  array();
+		$data =  array('action' => Admin::EDIT);
 		
 		$form = $this->formsdb->getForm($form_id);
 		$_POST['validate'] = TRUE; // set_rules do not work without initial POST data
@@ -398,7 +409,7 @@ class Admin extends EF_Controller {
 		$form = $this->db->get()->row();
 		$form_name = $form->form_name;
 
-		$this->db->from('Fields')->where('form_id',$form_id)->order_by('field_order','asc');
+		$this->db->from('Fields')->where(array('form_id'=>$form_id,'field_order >'=>-1))->order_by('field_order','asc');
 		$query = $this->db->get();
 		$fields = array();
 		foreach ($query->result() as $field)

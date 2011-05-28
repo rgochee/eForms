@@ -103,7 +103,7 @@ class FormsDB {
 		$form->time = $row->time_created;
 
 		// get fields info
-		$this->CI->db->from('Fields')->where('form_id',$form_id)->order_by('field_order','asc');
+		$this->CI->db->from('Fields')->where(array('form_id'=>$form_id,'field_order >'=>-1))->order_by('field_order','asc');
 		$query = $this->CI->db->get();
 		
 		if ($query->num_rows() > 0)
@@ -210,6 +210,39 @@ class FormsDB {
 		$this->db->form('Filled_Forms')->join('Forms', 'Forms.form_id = Filled_Forms.form_id')->join('Fields', 'Fields.form_id = Forms.form_id')->join('Filled_Values')->where('Fields.field_id = Filled_Values.field_id AND Filled_Forms.instance_id = Filled_Values.instance_id');
 		*/
 		return false;
+	}
+	
+	function disableField($form_id, $field_id)
+	{
+		$this->CI->db->select('field_name, field_order')->where(array('form_id' => $form_id, 'field_id' => $field_id));
+		$query = $this->CI->db->get('Fields');
+		$field = $query->row();
+		
+		$this->CI->db->where(array(
+			'form_id' => $form_id,
+			'field_order >' => $field->field_order
+		));
+		$this->CI->db->set('field_order', 'field_order-1', FALSE);
+		$this->CI->db->update('Fields');
+		$numShifted = $this->CI->db->affected_rows();
+		if ($this->CI->db->_error_message() != "")
+		{
+			$this->_logDbError('Shifting field_order failed');
+			return FALSE;
+		}
+		
+		// delete the actual field
+		$this->CI->db->where(array('form_id' => $form_id, 'field_id' => $field_id));
+		$this->CI->db->set('field_order', -1);
+		$this->CI->db->update('Fields');
+		$fieldDeleted = $this->CI->db->affected_rows();
+		if ($fieldDeleted == 0)
+		{
+			$this->_logDbError('Deleting field failed');
+			return FALSE;
+		}
+		
+		return $field->field_name;
 	}
 	
 	function editForm($form_id, $name, $description)
@@ -325,10 +358,7 @@ class FormsDB {
 		}
 		
 		// move the actual field
-		$this->CI->db->where(array(
-			'form_id' => $form_id,
-			'field_id' => $field_id
-		));
+		$this->CI->db->where(array('form_id' => $form_id, 'field_id' => $field_id));
 		$this->CI->db->set('field_order', $newOrder);
 		$this->CI->db->update('Fields');
 		$fieldMoved = $this->CI->db->affected_rows();

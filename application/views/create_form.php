@@ -15,7 +15,7 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 #success_msg { font-size: 110%; font-weight: bold; color: #A6A500; }
 </style>
 
-<h2>Create Form</h2>
+<h2><?php echo $action; ?> Form</h2>
 <form id="create_form" method="post">
 	<?php if (isset($success) && $success): ?>
 		<p id="success_msg">Edit successful!</p>
@@ -35,13 +35,13 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 	<?php $fields = returnWithDefault($fields, array(array())); ?>
 	<?php for($i=0; $i<$numFields; $i++):
 		$field = array(); ?>
-	<?php $this->load->view('edit_field', array('field_id'=>$i, 'field'=>$field)); ?>
+	<?php $this->load->view('edit_field', array('index'=>$i, 'field'=>$field)); ?>
 	<?php endfor ?>
 	</ul>
 
 	<div id="form_btns" class="field">
 		<input id="add_field" type="button" value="Add a Field" />
-		<input id="submit_btn" type="submit" value="Create Form" />
+		<input id="submit_btn" type="submit" value="<?php echo $action; ?> Form" />
 	</div>
 </form>
 
@@ -161,7 +161,20 @@ $(document).ready(function() {
 	
 		return false;
 	});
-
+<?php if ($action == Admin::EDIT): ?>
+	$('.delete_btn').live('click', function(e) {
+		var uri_match = /edit\/([0-9]+)\//.exec(window.location.pathname);
+		var form_id = uri_match[1];
+		var field_id = $(this).closest('.field').find('[name*="id"]').val();
+		
+		var current_url = window.location.href;
+		var base = current_url.substring(0, current_url.indexOf('edit/'));
+		var url = base + 'deleteField/' + form_id + '/' + field_id;
+		$('#content_inner').load(url, function(result) {
+			console.log(result);
+		});
+	});
+<?php endif; ?>
 });
 
 </script>

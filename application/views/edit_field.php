@@ -1,40 +1,40 @@
 <?php
 	$this->load->model('form');
 	$types = FieldTypes::getArray();
-	$fld_name = 'fields[' . $field_id . ']';
+	$fld_name = 'fields[' . $index . ']';
 ?>
-<li id="field#<?php echo $field_id; ?>" class="field">
-	<?php echo form_hidden($fld_name.'[id]', set_value($fld_name.'[id]', 0)); ?>
+<li id="field#<?php echo $index; ?>" class="field">
+	<?php echo form_hidden($fld_name.'[id]', set_value($fld_name.'[id]', 0), 'class="fid"'); ?>
 	
 	<?php 
-		echo form_label('Field Name', 'name'.$field_id, array('class' => 'field_label')); 
-		echo form_error('fields['. $field_id .'][name]'); 
-		echo form_input($fld_name.'[name]', set_value($fld_name.'[name]'), 'id="name'.$field_id.'" size="50"'); 
+		echo form_label('Field Name', 'name'.$index, array('class' => 'field_label')); 
+		echo form_error('fields['. $index .'][name]'); 
+		echo form_input($fld_name.'[name]', set_value($fld_name.'[name]'), 'id="name'.$index.'" size="50"'); 
 	?>
 	<a class="delete_btn" href="#">Delete Field</a>
 	
 	<?php 
-		echo form_label('Help Text', 'description'.$field_id, array('class' => 'field_label')); 
-		echo form_error('fields['. $field_id .'][description]'); 
+		echo form_label('Help Text', 'description'.$index, array('class' => 'field_label')); 
+		echo form_error('fields['. $index .'][description]'); 
 		echo form_textarea($fld_name.'[description]', set_value($fld_name.'[description]'),
-			'id="description'.$field_id.'" cols="35" rows="3"'); 
+			'id="description'.$index.'" cols="35" rows="3"'); 
 	?>
 	
 	<?php 
-		echo form_label('Field Type', 'type'.$field_id, array('class' => 'field_label')); 
-		echo form_error('fields['. $field_id .'][type]'); 
-		echo form_error('fields['. $field_id .'][required]'); 
+		echo form_label('Field Type', 'type'.$index, array('class' => 'field_label')); 
+		echo form_error('fields['. $index .'][type]'); 
+		echo form_error('fields['. $index .'][required]'); 
 		echo form_dropdown($fld_name.'[type]', $types, set_value($fld_name.'[type]'), 
-			'id="type'.$field_id.'" class="type_select"'); 
+			'id="type'.$index.'" class="type_select"'); 
 	?>
 	
 	<?php 
 		echo form_checkbox($fld_name.'[required]', 'true', set_value($fld_name.'[required]'), 
-			'id="required'.$field_id.'"');
-		echo form_label('This field is required', 'required'.$field_id); 
+			'id="required'.$index.'"');
+		echo form_label('This field is required', 'required'.$index); 
 	?>
 	
-	<?php echo form_error('fields['. $field_id .'][options][]'); ?>
+	<?php echo form_error('fields['. $index .'][options][]'); ?>
 	<ul class="options">
 		<?php $optionNum = max(array_count($fld_name.'[options][]'), 1); ?>
 		<?php for ($i=0; $i<$optionNum; $i++): ?>
