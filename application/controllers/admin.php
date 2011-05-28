@@ -111,6 +111,7 @@ class Admin extends CI_Controller {
 			}
 			
 			//If there are no errors
+			$this->load->helper('text_helper');
 			$this->load->view('header', array('title'=>'- Success!'));
 			$this->load->view('create_success', array('form_name'=>$name, 'form_id'=>$form_id));
 		}
@@ -118,39 +119,106 @@ class Admin extends CI_Controller {
 		$this->load->view('footer');
 	}
 	
-	public function edit($form_id)
+	private function _setFieldEditValidation($index)
 	{
-		$this->load->helper('form');
-		$this->load->library('form_validation');
-		
-		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
-		
-		$this->load->library('FormsDB');
-		$form = $this->formsdb->getForm($form_id);
-		
+		$this->form_validation->set_rules('fields['.$index.'][id]', 'field id', 'integer');
+		$this->form_validation->set_rules('fields['.$index.'][name]', 'field name', 'trim|required');
+		$this->form_validation->set_rules('fields['.$index.'][description]', 'help text', 'trim');
+		$this->form_validation->set_rules('fields['.$index.'][type]', 'type', 'callback__fieldTypeCheck');
+		$this->form_validation->set_rules('fields['.$index.'][required]', 'field requirement', '');
+		$this->form_validation->set_rules('fields['.$index.'][options][]', 'field option', 'trim|callback__separatorCheck');
+	}
+	
+	private function loadFormFromDatabase($form_id, $form)
+	{
 		$_POST['name'] = $form->name;
 		$_POST['description'] = $form->description;
-		$this->form_validation->set_rules('name', 'Form name', 'required|trim');
-		$this->form_validation->set_rules('description', 'Form description', 'trim');
 		
-		$fields = array();
-		foreach ($form->fields as $i=>$field) //for each array of field info in the array of fields
+		foreach ($form->fields as $i=>$field) 
 		{
+			// fill with db values
+			$_POST['fields'][$i]['id'] = $field->id;
 			$_POST['fields'][$i]['name'] = $field->name;
 			$_POST['fields'][$i]['description'] = $field->description;
 			$_POST['fields'][$i]['type'] = $field->type;
 			$_POST['fields'][$i]['required'] = $field->required;
-			
-			$this->form_validation->set_rules('fields['.$i.'][name]', 'field name', 'trim|required');
-			$this->form_validation->set_rules('fields['.$i.'][description]', 'help text', 'trim');
-			$this->form_validation->set_rules('fields['.$i.'][type]', 'type', 'callback__fieldTypeCheck');
-			$this->form_validation->set_rules('fields['.$i.'][required]', 'field requirement', '');
-			$this->form_validation->set_rules('fields['.$i.'][options][]', 'field option', 'trim|callback__separatorCheck');
+			$_POST['fields'][$i]['options'] = $field->options->getValueOptions();
+			$_POST['fields'][$i]['validation'] = $field->options->getRulesString();
 		}
-		$this->form_validation->run();
+	}
+	
+	// assumes libraries are loaded
+	private function processEdits($form_id, $form)
+	{
+		$fieldsPost = $this->input->post('fields');
+		// $i is not necessarily the field id (for new fields)
+		foreach ($fieldsPost as $i=>$fieldAttrs)
+		{
+			$field_id = $fieldAttrs['id'];
+			$field = new Field();
+			$field->name = $fieldAttrs['name'];
+			$field->description = $fieldAttrs['description'];
+			$field->type = $fieldAttrs['type'];
+			$field->required = isset($fieldAttrs['required']);
+			
+			$options = new FieldOptions();
+			$options->setOptions($fieldAttrs['validation']);
+			if ($field->type == "checkbox" ||  $field->type == "dropdown" ||
+				$field->type == "radio")
+			{
+				$options->setValueOptions($fieldAttrs['options']);
+			}
+			$field->options = $options;
+			
+			if (empty($field_id))
+			{
+				$this->formsdb->addField($form_id, $field);
+			}
+			else
+			{
+				$this->formsdb->editField($form_id, $field_id, $field);
+			}
+		}
+	}
+	
+	public function edit($form_id)
+	{
+		$this->load->library('FormsDB');
+		$this->load->library('form_validation');
+		$this->load->helper('form');
+		
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
+		
+		$data =  array();
+		
+		$form = $this->formsdb->getForm($form_id);
+		
+		$this->form_validation->set_rules('name', 'Form name', 'required|trim');
+		$this->form_validation->set_rules('description', 'Form description', 'trim');
+		foreach ($this->input->post('fields') as $i=>$fieldAttrs)
+		{
+			$this->_setFieldEditValidation($i);
+		}
+		
+		$data['numFields'] = max(count($form->fields), count($this->input->post('fields')));
+		
+		$requestType = $this->input->server('REQUEST_METHOD');
+		if ($requestType == "GET")
+		{
+			// simulates a POST request in order to load data from the database
+			$this->loadFormFromDatabase($form_id, $form);
+			$this->form_validation->run();
+		}
+		else if ($this->form_validation->run() && $requestType == "POST")
+		{
+			// add more sophisticated error handling?
+			$this->formsdb->editForm($form_id, $this->input->post('name'), $this->input->post('description'));
+			$this->processEdits($form_id, $form);
+			$data['success'] = TRUE;
+		}
 		
 		$this->load->view('header', array('title'=>'- Edit Form'));
-		$this->load->view('create_form', array('numFields'=>count($form->fields)));
+		$this->load->view('create_form', $data);
 		$this->load->view('footer');
 	}
 	
@@ -159,7 +227,7 @@ class Admin extends CI_Controller {
 		$subRules = array();
 		foreach ($ruleNames as $ruleName)
 		{
-			$value = set_value($ruleName);
+			$value = $this->input->post($ruleName);
 			if ($value != "")
 			{
 				$subRules[] = $ruleName . '[' . $value . ']';
@@ -237,32 +305,32 @@ class Admin extends CI_Controller {
 			if ($lengthValidation !== "") 
 			{
 				$newRuleSet[] = $lengthValidation;
-				if (set_value('min_length') != "")
+				if ($this->input->post('min_length') != "")
 				{
-					$prettyRuleString .= "Must be at least " . set_value('min_length') . " characters. ";
+					$prettyRuleString .= "Must be at least " . $this->input->post('min_length') . " characters. ";
 				}
-				if (set_value('max_length') != "")
+				if ($this->input->post('max_length') != "")
 				{
-					$prettyRuleString .= "Must be at most " . set_value('max_length') . " characters. ";
+					$prettyRuleString .= "Must be at most " . $this->input->post('max_length') . " characters. ";
 				}
 			}
 			
-			switch (set_value('vtype'))
+			switch ($this->input->post('vtype'))
 			{
 			case $charVType:
-				$charList = str_replace(' ', OPT_SEPARATOR, set_value('char_specs'));
-				$niceList = str_replace(' ', '", "', set_value('char_specs'));
-				switch (set_value('chars'))
+				$charList = str_replace(' ', OPT_SEPARATOR, $this->input->post('char_specs'));
+				$niceList = str_replace(' ', '", "', $this->input->post('char_specs'));
+				switch ($this->input->post('chars'))
 				{
 				case 'allow':
-					$subRules[] = 'contains_only' . '[' . set_value($ruleName) . ']';
+					$subRules[] = 'contains_only' . '[' . $this->input->post($ruleName) . ']';
 					if ($niceList != "")
 					{
 						$prettyRuleString .= 'Can only contain "' . $niceList . '". ';
 					}
 					break;
 				case 'disallow':
-					$subRules[] = 'restricted_chars' . '[' . set_value($ruleName) . ']';
+					$subRules[] = 'restricted_chars' . '[' . $this->input->post($ruleName) . ']';
 					if ($niceList != "")
 					{
 						$prettyRuleString .= 'Cannot contain ' . $niceList . '. ';
@@ -278,13 +346,13 @@ class Admin extends CI_Controller {
 				$newRuleSet[] = 'integer';
 				$newRuleSet[] = $this->_collapseParamedRules(array('greater_than', 'less_than'));
 				$prettyRuleString .= 'Must be a number';
-				if (set_value('greater_than') != "")
+				if ($this->input->post('greater_than') != "")
 				{
-					$prettyRuleString .= ' greater than ' . set_value('greater_than');
+					$prettyRuleString .= ' greater than ' . $this->input->post('greater_than');
 				}
-				if (set_value('less_than') != "")
+				if ($this->input->post('less_than') != "")
 				{
-					$prettyRuleString .= ' less than ' . set_value('less_than');
+					$prettyRuleString .= ' less than ' . $this->input->post('less_than');
 				}
 				$prettyRuleString .= '. ';
 				break;
@@ -298,10 +366,10 @@ class Admin extends CI_Controller {
 					'alpha_numeric' => 'Can only contain alphanumeric characters. ', 
 					'valid_email' => 'Must be a valid email. ');
 				
-				if (array_search(set_value('vtype'), array_keys($asIsRules)) !== FALSE)
+				if (array_search($this->input->post('vtype'), array_keys($asIsRules)) !== FALSE)
 				{
-					$newRuleSet[] = set_value('vtype');
-					$prettyRuleString .= $asIsRules[set_value('vtype')];
+					$newRuleSet[] = $this->input->post('vtype');
+					$prettyRuleString .= $asIsRules[$this->input->post('vtype')];
 				}
 			}
 			
@@ -320,13 +388,12 @@ class Admin extends CI_Controller {
 	public function data($form_id)
 	{
 		$this->load->view('header');
-
+		
 		$this->load->database();
 
 		$this->db->from('Forms')->where('form_id',$form_id);
 		$form = $this->db->get()->row();
 		$form_name = $form->form_name;
-
 
 		$this->db->from('Fields')->where('form_id',$form_id)->order_by('field_order','asc');
 		$query = $this->db->get();
@@ -352,6 +419,7 @@ class Admin extends CI_Controller {
 			array_push($responses, $response);
 		}
 
+		$this->load->helper('text_helper');
 		$this->load->view('form_data', array('form_id'=>$form_id, 'form_name'=>$form_name, 'fields'=>$fields, 'data'=>$responses));
 		$this->load->view('footer');
 	}

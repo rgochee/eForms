@@ -12,10 +12,15 @@
 #name { height: 22px; padding: 2px; }
 textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 .editingField { background-color: #FFFE73; border-bottom: 1px solid #BFBE30; } 
+#success_msg { font-size: 110%; font-weight: bold; color: #A6A500; }
 </style>
 
-<form id="create_form" method="post">
 <h2>Create Form</h2>
+<form id="create_form" method="post">
+	<?php if (isset($success) && $success): ?>
+		<p id="success_msg">Edit successful!</p>
+	<?php endif; ?>
+
 	<div class="field editingField">
 		<label class="field_label"  for="name">Form Name</label>
 		<?php echo form_error('name'); ?>

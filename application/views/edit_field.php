@@ -4,6 +4,8 @@
 	$fld_name = 'fields[' . $field_id . ']';
 ?>
 <li id="field#<?php echo $field_id; ?>" class="field">
+	<?php echo form_hidden($fld_name.'[id]', set_value($fld_name.'[id]', 0)); ?>
+	
 	<?php 
 		echo form_label('Field Name', 'name'.$field_id, array('class' => 'field_label')); 
 		echo form_error('fields['. $field_id .'][name]'); 
@@ -34,7 +36,7 @@
 	
 	<?php echo form_error('fields['. $field_id .'][options][]'); ?>
 	<ul class="options">
-		<?php $optionNum = array_count($fld_name.'[options][]'); ?>
+		<?php $optionNum = max(array_count($fld_name.'[options][]'), 1); ?>
 		<?php for ($i=0; $i<$optionNum; $i++): ?>
 		<li>
 			<span class="dummy"></span>

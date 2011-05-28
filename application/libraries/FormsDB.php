@@ -212,6 +212,24 @@ class FormsDB {
 		return false;
 	}
 	
+	function editForm($form_id, $name, $description)
+	{
+		$update = array(
+			'form_name' => $name,
+			'form_description' => $description
+		);
+		
+		$this->CI->db->where('form_id', $form_id);
+		$this->CI->db->update('Forms', $update);echo $this->CI->db->last_query();
+		
+		if ($this->CI->db->_error_message() != "")
+		{
+			$this->_logDbError('Editing form name/description failed');
+			return FALSE;
+		}
+		return $this->CI->db->affected_rows();
+	}
+	
 	function editField($form_id, $field_id, $field)
 	{
 		$field = array(
@@ -223,7 +241,7 @@ class FormsDB {
 		);
 		
 		$this->CI->db->where(array('form_id' => $form_id, 'field_id' => $field_id));
-		$this->CI->db->update('Fields', $field); $this->CI->db->last_query();
+		$this->CI->db->update('Fields', $field);
 		// can't use affected rows == 0 check
 		// affected rows is 0 when the field attributes are the same
 		if ($this->CI->db->_error_message() != "")

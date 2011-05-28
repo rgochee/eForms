@@ -27,8 +27,8 @@ function returnWithDefault(&$obj, $default)
 function niceFormUri($uri, $form_id, $form_name)
 {
 	$urlName = strtolower($form_name);
-	$urlName = preg_replace('/[^A-Za-z0-9]/', '', $urlName);
 	$urlName = str_replace(' ', '-', $urlName);
+	$urlName = preg_replace('/[^A-Za-z0-9\-]*/', '', $urlName);
 	return $uri . $form_id . '/' . $urlName;
 }
 

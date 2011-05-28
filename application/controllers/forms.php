@@ -22,6 +22,7 @@ class Forms extends CI_Controller {
 	public function browse($start = 0)
 	{
 		$per_page = 20;
+		$this->load->helper('text_helper');
 		$this->load->library('FormsDB');
 		$this->load->library('pagination');
 
