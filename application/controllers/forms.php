@@ -31,7 +31,7 @@ class Forms extends CI_Controller {
 			'per_page' => $per_page
 		));
 
-		$data = array('forms' => $this->formsdb->getForms($per_page, $start, FormsDB::SORT_NAME));
+		$data = array('forms' => $this->formsdb->getForms($per_page, $start, FormsDB::SORT_TIME));
 		$this->load->view('header', array('title'=>'- Browse Forms'));
 		$this->load->view('forms_list', $data);
 		$this->load->view('footer');

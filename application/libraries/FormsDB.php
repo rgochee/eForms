@@ -215,6 +215,117 @@ class FormsDB {
 		return false;
 	}
 	
+	function editField($field_id, $field)
+	{
+		$data = array(
+			'field_name' => $field->name,
+			'field_type' => $field->type,
+			'field_options' => $field->options->getSerialized(),
+			'field_required' => $field->required,
+			'field_description' => $field->description
+		);
+		
+		$this->CI->db->update('Fields', $data, array('field_id' => $field_id)); 
+		$affected = $this->CI->db->affected_rows();
+		if ($affected == 0)
+		{
+			$errorMsg = 'Editing field '.$field_id.' failed: ' . $this->CI->db->_error_message();
+			log_message('error', $errorMsg);
+			return FALSE;
+		}
+		
+		return $affected;
+	}
+	
+	function addField($form_id, $field, $order = -1)
+	{
+		// get number of fields in the form to determine order
+		$this->CI->db->from('Fields')->where('form_id', $form_id);
+		$numFields = $this->CI->db->count_all_results();
+	
+		$field = array(
+			'form_id' => $form_id,
+			'field_name' => $field->name,
+			'field_type' => $field->type,
+			'field_options' => $field->options->getSerialized(),
+			'field_required' => $field->required,
+			'field_description' => $field->description,
+			'field_order' => $numFields // last order
+		);
+		$this->CI->db->insert('Fields', $field);
+		if ($this->CI->db->affected_rows() == 0)
+		{
+			$errorMsg = 'Cannot add field: ' . $this->CI->db->_error_message();
+			log_message('error', $errorMsg);
+			return FALSE;
+		}
+		
+		$field_id = $this->CI->db->insert_id();
+		if ($order != -1)
+		{
+			$this->moveFieldOrder($form_id, $field_id, $order);
+		}
+		
+		return $field_id;
+	}
+	
+	function moveFieldOrder($form_id, $field_id, $newOrder)
+	{
+		$this->CI->db->from('Fields')->where('field_id', $field_id);
+		$query = $this->CI->db->get();
+		if ($query->num_rows() == 0)
+		{
+			log_message('error', 'field doesn\'t exist');
+			return FALSE;
+		}
+		
+		// Decide whether fields must be shifted up/down to make room
+		$field = $query->row();
+		if ($newOrder < $field->field_order)
+		{
+			$min = $newOrder;
+			$max = $field->field_order;
+			$shift = '+1';
+		}
+		else
+		{
+			$min = $field->field_order;
+			$max = $newOrder;
+			$shift = '-1';
+		}
+		
+		// shift fields between old and new position
+		$this->CI->db->where(array(
+			'form_id' => $form_id,
+			'field_order >=' => $min,
+			'field_order <=' => $max
+		));
+		$this->CI->db->set('field_order', 'field_order'.$shift, FALSE);
+		$this->CI->db->update('Fields');
+		$numShifted = $this->CI->db->affected_rows();
+		if ($numShifted == 0&&false)
+		{
+			$errorMsg = 'Adding 1 to field_orders failed: ' . $this->CI->db->_error_message();
+			log_message('error', $errorMsg);
+			return FALSE;
+		}
+		
+		// move the actual field
+		$this->CI->db->where(array(
+			'form_id' => $form_id,
+			'field_id' => $field_id
+		));
+		$this->CI->db->set('field_order', $newOrder);
+		$this->CI->db->update('Fields');
+		$fieldMoved = $this->CI->db->affected_rows();
+		if ($fieldMoved == 0)
+		{
+			$errorMsg = 'Moving field failed: ' . $this->CI->db->_error_message();
+			log_message('error', $errorMsg);
+			return FALSE;
+		}
+		return $numShifted + $fieldMoved;
+	}
 }
 
 ?>
