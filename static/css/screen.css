@@ -36,3 +36,16 @@ h3 { font-size: 20px; font-family: Georgia, Times, serif; margin: 15px 0 10px; b
 .options li { padding: 2px; }
 .dropdown { margin-top: 5px; }
 pre { font-family: Consolas, Lucida Console, Courier New, monospace; }
+
+
+#form_data .header { background-color: #FFFE73; cursor: pointer; font-weight: bold; padding: 5px 10px; color: #000;  }
+#form_data .header > .sortIcon { display: inline-block; background: url(../images/sort.png) no-repeat -28px 0; width: 10px; height: 9px; 
+	margin-left: 4px; } 
+#form_data .headerSortUp > .sortIcon { background-position: -50px 0; }
+#form_data .headerSortDown > .sortIcon { background-position: -4px 4px; }
+#form_data td { padding: 2px 5px; }
+#form_data, #form_data th, #form_data td { border: 1px solid #FFA573; }
+#form_data { border-width: 1px 1px 0 0; }
+#form_data th, #form_data td { border-width: 0 0 1px 1px; }
+.time_col { color: #777777; }
+#nodata { text-align: center; }

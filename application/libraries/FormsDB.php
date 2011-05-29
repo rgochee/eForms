@@ -253,7 +253,7 @@ class FormsDB {
 		);
 		
 		$this->CI->db->where('form_id', $form_id);
-		$this->CI->db->update('Forms', $update);echo $this->CI->db->last_query();
+		$this->CI->db->update('Forms', $update);
 		
 		if ($this->CI->db->_error_message() != "")
 		{

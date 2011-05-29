@@ -4,7 +4,7 @@
 	$fld_name = 'fields[' . $index . ']';
 ?>
 <li id="field#<?php echo $index; ?>" class="field">
-	<?php echo form_hidden($fld_name.'[id]', set_value($fld_name.'[id]', 0), 'class="fid"'); ?>
+	<?php echo form_hidden($fld_name.'[id]', set_value($fld_name.'[id]', 0)); ?>
 	
 	<?php 
 		echo form_label('Field Name', 'name'.$index, array('class' => 'field_label')); 

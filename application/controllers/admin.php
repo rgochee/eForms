@@ -208,6 +208,9 @@ class Admin extends EF_Controller {
 		$_POST['validate'] = TRUE; // set_rules do not work without initial POST data
 		
 		$data['numFields'] = max(count($form->fields), count($this->input->post('fields')));
+		$data['form_id'] = $form->id;
+		$data['form_name'] = $form->name;
+		
 		$this->form_validation->set_rules('name', 'Form name', 'required|trim');
 		$this->form_validation->set_rules('description', 'Form description', 'trim');
 		for ($i=0; $i<$data['numFields']; $i++)
@@ -430,6 +433,7 @@ class Admin extends EF_Controller {
 				$field_name = $fields[$filled_field->field_id];
 				$response[$field_name] = str_replace(OPT_SEPARATOR, ', ', $filled_field->value);
 			}
+			$response['time_submitted'] = $row->time;
 			array_push($responses, $response);
 		}
 

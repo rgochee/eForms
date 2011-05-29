@@ -20,6 +20,9 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 	<?php if (isset($success) && $success): ?>
 		<p id="success_msg">Edit successful!</p>
 	<?php endif; ?>
+	<?php if ($action == Admin::EDIT): ?>
+		<?php echo anchor(niceFormUri('forms/fill/', $form_id, $form_name), 'Go to form', 'title="View the form"'); ?>
+	<?php endif; ?>
 
 	<div class="field editingField">
 		<label class="field_label"  for="name">Form Name</label>
@@ -32,21 +35,19 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 	</div>
 
 	<ul id="fields">
-	<?php $fields = returnWithDefault($fields, array(array())); ?>
-	<?php for($i=0; $i<$numFields; $i++):
-		$field = array(); ?>
-	<?php $this->load->view('edit_field', array('index'=>$i, 'field'=>$field)); ?>
+	<?php for($i=0; $i<$numFields; $i++): ?>
+	<?php $this->load->view('edit_field', array('index'=>$i)); ?>
 	<?php endfor ?>
 	</ul>
 
 	<div id="form_btns" class="field">
 		<input id="add_field" type="button" value="Add a Field" />
-		<input id="submit_btn" type="submit" value="<?php echo $action; ?> Form" />
+		<input id="submit_btn" type="submit" value="Save Form" />
 	</div>
 </form>
 
 <div id="field_tpl" style="display: none;">
-	<?php $this->load->view('edit_field', array('field_id'=>'{{index}}', 'field'=>array())); ?>
+	<?php $this->load->view('edit_field', array('index'=>'{{index}}', 'field'=>array())); ?>
 </div>
 
 <div id="validationDlg"></div>
@@ -62,12 +63,13 @@ $(document).ready(function() {
 		
 		var tpl = $('#field_tpl').html();
 		var index = $('#fields').children().length;
-			
 		var html = tpl.replace(/{{index}}/g, index);
+		
 		$(html)
 			.appendTo('#fields')
-			.children('input:first')
-				.trigger('focus');
+			.children('input[id^="name"]')
+				.trigger('focus')
+				.val('');
 	});
 	$('.add_option').live('click', function(e) {
 		e.preventDefault();
