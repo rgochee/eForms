@@ -406,41 +406,22 @@ class Admin extends EF_Controller {
 	{
 		$this->load->view('header');
 		
-		$this->load->database();
-
-		$this->db->from('Forms')->where('form_id',$form_id);
-		$form = $this->db->get()->row();
-		$form_name = $form->form_name;
-
-		$this->db->from('Fields')->where(array('form_id'=>$form_id,'field_order >'=>-1))->order_by('field_order','asc');
-		$query = $this->db->get();
-		$fields = array();
-		foreach ($query->result() as $field)
+		$this->load->library('FormsDB');
+		$result = $this->formsdb->getFilledData($form_id);
+		
+		if ($result === false)
 		{
-			$fields[$field->field_id] = $field->field_name;
+			$this->load->view('form_data', array('form'=>false));
 		}
-
-		$this->db->from('Filled_Forms')->where('form_id',$form_id);
-		$query = $this->db->get();
-		$responses = array();
-		foreach ($query->result() as $row)
-		{
-			$this->db->from('Filled_Values')->where('instance_id', $row->instance_id);
-			$subquery = $this->db->get();
-			$response = array();
-			foreach ($subquery->result() as $filled_field)
-			{
-				$field_name = $fields[$filled_field->field_id];
-				$response[$field_name] = str_replace(OPT_SEPARATOR, ', ', $filled_field->value);
-			}
-			$response['time_submitted'] = $row->time;
-			array_push($responses, $response);
+		else
+		{	
+			$form = $result['form'];
+			$responses = $result['responses'];
+			
+			$this->load->view('form_data', array('form'=>$form, 'data'=>$responses));
+			$this->load->view('footer');
 		}
-
-		$this->load->helper('text_helper');
-		$this->load->view('form_data', array('form_id'=>$form_id, 'form_name'=>$form_name, 'fields'=>$fields, 'data'=>$responses));
-		$this->load->view('footer');
-	}
+	}	
 
 	public function changeMode($admin)
 	{

@@ -212,6 +212,33 @@ class FormsDB {
 		return false;
 	}
 	
+		function getFilledData($form_id)
+	{
+		$form = $this->getForm($form_id);
+
+		if ($form === false)
+		{
+			return false;
+		}
+		
+		$this->CI->db->from('Filled_Forms')->where('form_id',$form_id);
+		$query = $this->CI->db->get();
+		$responses = array();
+		foreach ($query->result() as $row)
+		{
+			$this->CI->db->from('Filled_Values')->join('Fields','Filled_Values.field_id = Fields.field_id')->where('instance_id', $row->instance_id)->order_by('field_order');
+			$subquery = $this->CI->db->get();
+			$response = array();
+			foreach ($subquery->result() as $filled_field)
+			{
+				$response[$filled_field->field_name] = str_replace(OPT_SEPARATOR, ', ', $filled_field->value);
+			}
+			$response['_time_submitted'] = $row->time;
+			array_push($responses, $response);
+		}
+		return array('form' => $form, 'responses' => $responses);
+	}
+	
 	function disableField($form_id, $field_id)
 	{
 		$this->CI->db->select('field_name, field_order')->where(array('form_id' => $form_id, 'field_id' => $field_id));
