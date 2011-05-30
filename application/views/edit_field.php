@@ -5,12 +5,17 @@
 ?>
 <li id="field#<?php echo $index; ?>" class="field">
 	<?php echo form_hidden($fld_name.'[id]', set_value($fld_name.'[id]', 0)); ?>
+	<span class="form_index"><?php echo form_hidden($fld_name.'[index]', set_value($fld_name.'[index]', $index)); ?></span>
 	
 	<?php 
 		echo form_label('Field Name', 'name'.$index, array('class' => 'field_label')); 
 		echo form_error('fields['. $index .'][name]'); 
 		echo form_input($fld_name.'[name]', set_value($fld_name.'[name]'), 'id="name'.$index.'" size="50"'); 
 	?>
+	<div class="field_arrows">
+		<a class="up_arrow" href="#">&uarr;</a>
+		<a class="down_arrow" href="#">&darr;</a>
+	</div>
 	<a class="delete_btn" href="#">Delete Field</a>
 	
 	<?php 

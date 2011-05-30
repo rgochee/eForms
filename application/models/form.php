@@ -21,6 +21,7 @@ class Field {
 	var $options;
 	var $required;
 	var $description;
+	var $order;
 	var $value;
 	
 	public static function serializeValueArray($values) 

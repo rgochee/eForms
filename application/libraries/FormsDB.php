@@ -118,6 +118,7 @@ class FormsDB {
 				$field->options = new FieldOptions($row->field_options);
 				$field->required = $row->field_required;
 				$field->description = $row->field_description;
+				$field->order = $row->field_order;
 				
 				// add to form result
 				$form->fields[] = $field;
@@ -212,6 +213,11 @@ class FormsDB {
 		return false;
 	}
 	
+	function editFilledForm($instance_id)
+	{
+		return false;
+	}
+	
 		function getFilledData($form_id)
 	{
 		$form = $this->getForm($form_id);
@@ -297,7 +303,8 @@ class FormsDB {
 			'field_type' => $field->type,
 			'field_options' => $field->options->getSerialized(),
 			'field_required' => $field->required,
-			'field_description' => $field->description
+			'field_description' => $field->description,
+			'field_order' => $field->order
 		);
 		
 		$this->CI->db->where(array('form_id' => $form_id, 'field_id' => $field_id));

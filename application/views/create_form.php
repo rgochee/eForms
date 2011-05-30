@@ -13,6 +13,9 @@
 textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 .editingField { background-color: #FFFE73; border-bottom: 1px solid #BFBE30; } 
 #success_msg { font-size: 110%; font-weight: bold; color: #A6A500; }
+.field_arrows { display:inline-block; }
+.field_arrows a { text-decoration:none; font-weight:bold; font-size:2em; color: #666}
+.field_arrows a:hover { color:#999;} 
 </style>
 
 <h2><?php echo $action; ?> Form</h2>
@@ -56,7 +59,19 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
 <script type="text/javascript">
-
+	jQuery.fn.swapInputs = function(to) {
+		return this.each(function() {
+			var orig = $(this);
+			var toCopy = to.clone(true);
+			var origCopy = orig.clone(true);
+			var toIndex = toCopy.find('.form_index input').val();
+			var origIndex = origCopy.find('.form_index input').val();
+			origCopy.find('.form_index input').val(toIndex);
+			toCopy.find('.form_index input').val(origIndex);
+			to.replaceWith(origCopy);
+			orig.replaceWith(toCopy);
+		});
+	};
 $(document).ready(function() {
 	$('#add_field').click(function(e) {
 		e.preventDefault();
@@ -85,7 +100,24 @@ $(document).ready(function() {
 		var li = $(this).parent();
 		var ul = li.parent();
 		if (ul.children('li').length > 1)
-			li.remove();
+			alert(ul.children('li').length);
+			//li.remove();
+	});
+	$('.up_arrow').live('click', function(e) {
+		e.preventDefault();
+		var li = $(this).parent().parent();
+		if (li.index() > 0)
+		{
+			li.swapInputs(li.prev());
+		}
+	});
+	$('.down_arrow').live('click', function(e) {
+		e.preventDefault();
+		var li = $(this).parent().parent();
+		if (li.index() < li.parent().children('li').length - 1)
+		{
+			li.swapInputs(li.next());
+		}
 	});
 	$('.type_select').live('change', function(e) {
 		var type = $(this).val();

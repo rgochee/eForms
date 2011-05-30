@@ -156,6 +156,7 @@ class Admin extends EF_Controller {
 			$_POST['fields'][$i]['type'] = $field->type;
 			$_POST['fields'][$i]['required'] = $field->required;
 			$_POST['fields'][$i]['options'] = $field->options->getValueOptions();
+			$_POST['fields'][$i]['order'] = $field->order;
 			$_POST['fields'][$i]['validation'] = $field->options->getRulesString();
 		}
 	}
@@ -172,6 +173,7 @@ class Admin extends EF_Controller {
 			$field->name = $fieldAttrs['name'];
 			$field->description = $fieldAttrs['description'];
 			$field->type = $fieldAttrs['type'];
+			$field->order = $fieldAttrs['index'];
 			$field->required = isset($fieldAttrs['required']);
 			
 			$options = new FieldOptions();
@@ -231,6 +233,10 @@ class Admin extends EF_Controller {
 			$this->formsdb->editForm($form_id, $this->input->post('name'), $this->input->post('description'));
 			$this->processEdits($form_id, $form);
 			$data['success'] = TRUE;
+			
+			// reget form to get updated data
+			//$form = $this->formsdb->getForm($form_id);
+			//$this->loadFormFromDatabase($form_id, $form);
 		}
 		
 		$this->setTitle('Edit Form');
