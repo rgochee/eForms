@@ -100,8 +100,7 @@ $(document).ready(function() {
 		var li = $(this).parent();
 		var ul = li.parent();
 		if (ul.children('li').length > 1)
-			alert(ul.children('li').length);
-			//li.remove();
+			li.remove();
 	});
 	$('.up_arrow').live('click', function(e) {
 		e.preventDefault();
