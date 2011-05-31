@@ -26,7 +26,8 @@
 			<div class="form_info">
 			<?php if($this->session->userdata('admin')): ?>
 		<?php echo anchor(niceFormUri('admin/edit/', $form->id, $form->name), 'edit', 'title="Edit the form"'); ?>
-			<?php echo anchor(niceFormUri('admin/data/' . $form->id . $urlName, 'View data', 'title="View form responses"')); ?>
+		<?php echo anchor(niceFormUri('admin/data/', $form->id, $form->name), 'data', 'title="View form responses"'); ?>
+
 		<?php endif ?>
 		</div>
 	</li>
