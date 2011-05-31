@@ -10,6 +10,10 @@
 
 <h2>Available Forms</h2>
 
+<?php if ($this->input->get('find')): ?>
+	<p>Search results for "<?php echo $this->input->get('find'); ?>"</p>
+<?php endif; ?>
+
 <?php echo $this->pagination->create_links(); ?>
 <ul id="forms_list">
 <?php if (!empty($forms)): ?>

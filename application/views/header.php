@@ -31,7 +31,7 @@
 		<div class="right">
 			<form id="search_form" action='<?= base_url() ?>forms/search' method="get">
 				<input type="text" name="find" value="" size="30">
-				<input type="submit" name="Submit" value="Find Forms" />
+				<input type="submit" value="Find Forms" />
 			</form>
 		</div>
 		<div class="clear"></div>

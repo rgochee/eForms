@@ -128,6 +128,17 @@ class FormsDB {
 		return $form;
 	}
 	
+	function searchForm($search_terms, $limit = 20, $start = 0, $options = 0)
+	{
+		$words = explode(' ', $search_terms);
+		foreach ($words as $word)
+		{
+			$this->CI->db->or_like('form_name', $word); 
+		}
+		
+		return $this->getForms($limit, $start, $options);
+	}
+	
 	// return value: array of Form objects without form structure info
 	function getForms($limit = 20, $start = 0, $options = 0)
 	{
@@ -409,7 +420,6 @@ class FormsDB {
 		$errorMsg = $message . ' on "' . $this->CI->db->last_query() . '"';
 		$errorMsg .= "\n" . $this->CI->db->_error_message();
 		log_message('error', $errorMsg);
-	
 	}
 }
 

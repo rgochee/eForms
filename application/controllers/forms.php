@@ -53,10 +53,10 @@ class Forms extends EF_Controller {
 			'per_page' => $per_page
 		));
 
-		$data = array('forms' => $this->formsdb->getForms($per_page, $start, FormsDB::SORT_TIME));
+		$data = array('forms' => $this->formsdb->searchForm($this->input->get('find'), $per_page, $start, FormsDB::SORT_TIME));
 		$this->setTitle('Search Results');
 		$this->load->view('header');
-		$this->load->view('search', $data);
+		$this->load->view('forms_list', $data);
 		$this->load->view('footer');
 	}
 
