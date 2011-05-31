@@ -12,29 +12,29 @@
 <div id="header">
 	<img style="width: 50px; height: 40px;"
  	alt="AeroSpace Corp Logo" src="<?= base_url() ?>static/css/images/aero.gif">
-    <h1 id="logo"><a href="<?= base_url() ?>">eForms</a></h1>
+	<h1 id="logo"><a href="<?= base_url() ?>">eForms</a></h1>
 </div>
 
 <div id="content">
-    <div id="toolbar">
-	<div id="menubar" class="left">
-<ul>
-<li><a href=<?= base_url()?> target="" title="Home page"><span>Home</span></a></li>
-
-	    <?php if($this->session->userdata('admin')): ?>
+	<div id="toolbar">
+		<div id="menubar" class="left">
+		<ul>
+		<li><a href=<?= base_url()?> target="" title="Home page"><span>Home</span></a></li>
+		<li><a href=<?= base_url()?>forms/browse target="" title="Browse forms"><span>Browse</span></a></li>
+			
+		<?php if($this->session->userdata('admin')): ?>
 		<li><a href=<?= base_url()?>admin/create target="" title="Create form"><span>Create</span></a></li>
-	    <?php endif ?>
-
-	<li><a href=<?= base_url()?>forms/browse target="" title="Browse forms"><span>Browse</span></a></li>
-        
-        <div class="right">
-            	<form name = "form" action='<?= base_url() ?>forms/search' method="get">
-		<input type = "text" name = "find" value ="">
-                <input type="submit" name = "Submit" value="Search" />
-	    </form>
+		<?php endif ?>
+		</ul>
 		</div>
-        </div>
-        <div class="clear"></div>
-    </div>
+		
+		<div class="right">
+			<form id="search_form" action='<?= base_url() ?>forms/search' method="get">
+				<input type="text" name="find" value="" size="30">
+				<input type="submit" name="Submit" value="Find Forms" />
+			</form>
+		</div>
+		<div class="clear"></div>
+	</div>
 
-    <div id="content_inner">
+	<div id="content_inner">
