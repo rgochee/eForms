@@ -236,6 +236,9 @@ class Admin extends EF_Controller {
 			
 			// reget form to get updated data
 			//$form = $this->formsdb->getForm($form_id);
+			//$data['numFields'] = max(count($form->fields), count($this->input->post('fields')));
+			//$data['form_id'] = $form->id;
+			//$data['form_name'] = $form->name;
 			//$this->loadFormFromDatabase($form_id, $form);
 		}
 		

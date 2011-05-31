@@ -94,13 +94,17 @@ class Forms extends EF_Controller {
 					$options->addRule('required');
 				}
 				
+				
 				$input_name = 'fields['.$field->id.']';
 				if ($field->type === "checkbox")
 				{
 					$input_name .= '[]';
 				}
 				
-				$this->form_validation->set_rules($input_name, $field->name, $options->getSerialized());
+				if (isset($fields[$field->id]['value']) || $field->required)
+				{
+					$this->form_validation->set_rules($input_name, $field->name, $options->getSerialized());
+				}
 			}
 			
 			if ($this->form_validation->run() == FALSE)	//If validation rules have been violated
