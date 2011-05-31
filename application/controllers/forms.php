@@ -39,7 +39,27 @@ class Forms extends EF_Controller {
 		$this->load->view('forms_list', $data);
 		$this->load->view('footer');
 	}
-	
+
+	public function search($start = 0)
+	{
+		$per_page = 20;
+		$this->load->helper('text_helper');
+		$this->load->library('FormsDB');
+		$this->load->library('pagination');
+
+		$this->pagination->initialize(array(
+			'base_url' => base_url() . '/forms/browse/',
+			'total_rows' => $this->formsdb->getNumForms(),
+			'per_page' => $per_page
+		));
+
+		$data = array('forms' => $this->formsdb->getForms($per_page, $start, FormsDB::SORT_TIME));
+		$this->setTitle('Search Results');
+		$this->load->view('header');
+		$this->load->view('search', $data);
+		$this->load->view('footer');
+	}
+
 	public function fill($form_id)
 	{
 		$this->load->library('FormsDB');
