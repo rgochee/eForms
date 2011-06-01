@@ -14,6 +14,7 @@
 <?php echo $this->pagination->create_links(); ?>
 
 <ul id="forms_list">
+<?php echo form_error('find'); ?>
 <?php if (!empty($forms)): ?>
 <?php foreach($forms as $form): ?>
 	<li class="form">

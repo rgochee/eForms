@@ -46,14 +46,25 @@ class Forms extends EF_Controller {
 		$this->load->helper('text_helper');
 		$this->load->library('FormsDB');
 		$this->load->library('pagination');
+		$this->load->library('form_validation');
+		
+		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 
 		$this->pagination->initialize(array(
 			'base_url' => base_url() . '/forms/browse/',
 			'total_rows' => $this->formsdb->getNumForms(),
 			'per_page' => $per_page
 		));
-
-		$data = array('forms' => $this->formsdb->searchForm($this->input->get('find'), $per_page, $start, FormsDB::SORT_TIME));
+		
+		$find = $this->input->get('find');
+		$_POST['find'] = $find;	//The value must be in post for the validation to run correctly
+		$this->form_validation->set_rules('find', 'Search Parameters', 'trim');
+		$data = array();
+		if ($this->form_validation->run() != FALSE)
+		{
+			$data = array('forms' => $this->formsdb->searchForm($find, $per_page, $start, FormsDB::SORT_TIME));
+		}
+		
 		$this->setTitle('Search Results');
 		$this->load->view('header');
 		$this->load->view('forms_list', $data);
