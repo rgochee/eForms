@@ -133,6 +133,7 @@ class Admin extends EF_Controller {
 		$this->form_validation->set_rules('fields['.$index.'][type]', 'type', 'callback__fieldTypeCheck');
 		$this->form_validation->set_rules('fields['.$index.'][required]', 'field requirement', '');
 		$this->form_validation->set_rules('fields['.$index.'][options][]', 'field option', 'trim|callback__separatorCheck');
+		$this->form_validation->set_rules('fields['.$index.'][validation]', 'field validation', 'trim');
 	}
 	
 	public function deleteField($form_id, $field_id)
@@ -140,25 +141,6 @@ class Admin extends EF_Controller {
 		$this->load->library('FormsDB');
 		$field_name = $this->formsdb->disableField($form_id, $field_id);
 		echo $field_name . " deleted.";
-	}
-	
-	private function loadFormFromDatabase($form_id, $form)
-	{
-		$_POST['name'] = $form->name;
-		$_POST['description'] = $form->description;
-		
-		foreach ($form->fields as $i=>$field) 
-		{
-			// fill with db values
-			$_POST['fields'][$i]['id'] = $field->id;
-			$_POST['fields'][$i]['name'] = $field->name;
-			$_POST['fields'][$i]['description'] = $field->description;
-			$_POST['fields'][$i]['type'] = $field->type;
-			$_POST['fields'][$i]['required'] = $field->required;
-			$_POST['fields'][$i]['options'] = $field->options->getValueOptions();
-			$_POST['fields'][$i]['order'] = $field->order;
-			$_POST['fields'][$i]['validation'] = $field->options->getRulesString();
-		}
 	}
 	
 	// assumes libraries are loaded
@@ -224,7 +206,21 @@ class Admin extends EF_Controller {
 		if ($requestType == "GET")
 		{
 			// simulates a POST request in order to load data from the database
-			$this->loadFormFromDatabase($form_id, $form);
+			$_POST['name'] = $form->name;
+			$_POST['description'] = $form->description;
+			
+			foreach ($form->fields as $i=>$field) 
+			{
+				// fill with db values
+				$_POST['fields'][$i]['id'] = $field->id;
+				$_POST['fields'][$i]['name'] = $field->name;
+				$_POST['fields'][$i]['description'] = $field->description;
+				$_POST['fields'][$i]['type'] = $field->type;
+				$_POST['fields'][$i]['required'] = $field->required;
+				$_POST['fields'][$i]['options'] = $field->options->getValueOptions();
+				$_POST['fields'][$i]['order'] = $field->order;
+				$_POST['fields'][$i]['validation'] = $field->options->getRulesString();
+			}
 			$this->form_validation->run();
 		}
 		else if ($this->form_validation->run() && $requestType == "POST")
@@ -288,7 +284,7 @@ class Admin extends EF_Controller {
 		}
 		
 		// rules with 1 parameter
-		$paramedRules = array('min_length', 'max_length', 'less_than', 'greater_than', 'phone_format');
+		$paramedRules = array('min_length', 'max_length', 'greater_than', 'less_than', 'phone_format');
 		
 		// set rules
 		foreach ($paramedRules as $ruleName)
@@ -315,7 +311,8 @@ class Admin extends EF_Controller {
 			$rules = explode(RULE_SEPARATOR, $rulesStr);
 			foreach ($validationTypes as $ruleName=>$niceName)
 			{
-				if ($ruleName != $charVType && array_search($ruleName, $rules) !== FALSE) {
+				if ($ruleName != $charVType && array_search($ruleName, $rules) !== FALSE) 
+				{
 					$_POST['vtype'] = $ruleName;
 					break;
 				}
@@ -325,20 +322,11 @@ class Admin extends EF_Controller {
 		if ($this->form_validation->run() !== FALSE && $this->input->post('rules') === FALSE) 
 		{
 			$newRuleSet = array();
-			$prettyRuleString = "";
 			
 			$lengthValidation = $this->_collapseParamedRules(array('min_length', 'max_length'));
 			if ($lengthValidation !== "") 
 			{
 				$newRuleSet[] = $lengthValidation;
-				if ($this->input->post('min_length') != "")
-				{
-					$prettyRuleString .= "Must be at least " . $this->input->post('min_length') . " characters. ";
-				}
-				if ($this->input->post('max_length') != "")
-				{
-					$prettyRuleString .= "Must be at most " . $this->input->post('max_length') . " characters. ";
-				}
 			}
 			
 			switch ($this->input->post('vtype'))
@@ -350,41 +338,18 @@ class Admin extends EF_Controller {
 				{
 				case 'allow':
 					$subRules[] = 'contains_only' . '[' . $this->input->post($ruleName) . ']';
-					if ($niceList != "")
-					{
-						$prettyRuleString .= 'Can only contain "' . $niceList . '". ';
-					}
 					break;
 				case 'disallow':
 					$subRules[] = 'restricted_chars' . '[' . $this->input->post($ruleName) . ']';
-					if ($niceList != "")
-					{
-						$prettyRuleString .= 'Cannot contain ' . $niceList . '. ';
-					}
-					else
-					{
-						$prettyRuleString .= 'Can contain anything. ';
-					}
 					break;
 				}
 				break;
 			case 'integer':
 				$newRuleSet[] = 'integer';
 				$newRuleSet[] = $this->_collapseParamedRules(array('greater_than', 'less_than'));
-				$prettyRuleString .= 'Must be a number';
-				if ($this->input->post('greater_than') != "")
-				{
-					$prettyRuleString .= ' greater than ' . $this->input->post('greater_than');
-				}
-				if ($this->input->post('less_than') != "")
-				{
-					$prettyRuleString .= ' less than ' . $this->input->post('less_than');
-				}
-				$prettyRuleString .= '. ';
 				break;
 			case 'phone_format':
 				$newRuleSet[] = $this->_collapseParamedRules(array('phone_format'));
-				$prettyRuleString .= 'Must be a phone number (normalized as ' . $phoneFormats . '). ';
 				break;
 			default:
 				$asIsRules = array(
@@ -395,12 +360,12 @@ class Admin extends EF_Controller {
 				if (array_search($this->input->post('vtype'), array_keys($asIsRules)) !== FALSE)
 				{
 					$newRuleSet[] = $this->input->post('vtype');
-					$prettyRuleString .= $asIsRules[$this->input->post('vtype')];
 				}
 			}
 			
-			$uglyRuleString = str_replace('"', "\\\"", implode('|', $newRuleSet));
-			$prettyRuleString = str_replace('"', "\\\"", $prettyRuleString);
+			$options = new FieldOptions($newRuleSet);
+			$uglyRuleString = $options->getSerialized();
+			$prettyRuleString = $options->getPrettyRules();
 			printf('{"rules": "%s", "pretty": "%s"}', $uglyRuleString, $prettyRuleString);
 			return;
 		}

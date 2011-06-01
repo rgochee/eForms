@@ -139,6 +139,49 @@ class FieldOptions {
 		}
 	}
 	
+	public function getPrettyRules()
+	{ 
+		// TODO: Add handler for "specific characters"
+		
+		$result = "";
+		foreach ($this->rules as $rule)
+		{
+			switch ($rule)
+			{
+			case 'alpha':
+				$result .= "Can only contain the alphabet. ";
+				break;
+			case 'alpha_numeric':
+				$result .= "Can only contain alphanumeric characters. ";
+				break;
+			case 'valid_email':
+				$result .= "Must be a valid email. ";
+				break;
+			case 'integer':
+				$result .= "Must be a number. ";
+				break;
+			}
+			
+			$paramedRules = array(
+				'min_length' => "Must be at least %s characters. ", 
+				'max_length' => "Must be at most %s characters. ", 
+				'greater_than' => "Number must be greater than %s. ", 
+				'less_than' => "Number must be less than %s. ", 
+				'phone_format' => "Must be a phone number. "
+			);
+			
+			foreach ($paramedRules as $ruleName=>$prettyStr)
+			{
+				if (preg_match('/'.$ruleName.'\[([^\]]*)\]/', $rule, $match)) 
+				{
+					$arg = $match[1];
+					$result .= sprintf($prettyStr, $arg);
+				}
+			}
+		}
+		return $result;
+	}
+	
 	public function getSerialized()
 	{
 		$rulesStr = $this->getRulesString();

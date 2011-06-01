@@ -59,6 +59,9 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
 <script type="text/javascript">
+
+$(document).ready(function() {
+	
 	jQuery.fn.swapInputs = function(to) {
 		return this.each(function() {
 			var orig = $(this);
@@ -72,7 +75,7 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 			orig.replaceWith(toCopy);
 		});
 	};
-$(document).ready(function() {
+	
 	$('#add_field').click(function(e) {
 		e.preventDefault();
 		

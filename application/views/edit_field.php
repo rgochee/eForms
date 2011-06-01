@@ -54,7 +54,8 @@
 	
 	<ul class="validation">
 		<li><?php echo form_hidden($fld_name.'[validation]', set_value($fld_name.'[validation]')); ?></li>
-		<li class="pretty_rules"></li>
+		<?php $options = new FieldOptions(set_value($fld_name.'[validation]')); ?>
+		<li class="pretty_rules"><?php echo $options->getPrettyRules(); ?></li>
 		<li><?php echo anchor('admin/validation', 'Set Validation', 'class="add_btn add_validation"'); ?></li>
 	</ul>
 </li>
