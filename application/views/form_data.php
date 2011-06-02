@@ -94,16 +94,17 @@ $(function() {
 		// leave undefined if there are no search terms
 		if (search_string !== "") {
 			search_terms = search_string.toLowerCase().split(' ');
+			$('#search_info').text('Searching for "' + search_string + '"...');
+		} else {
+			$('#search_info').text('');
 		}
 		
 		var field = $('#col_names').val();
 		var fromDate = new Date($('#from_date').val()).getTime();
 		var toDate = new Date($('#to_date').val()).getTime();
 		
-		$('#search_info').text('Searching for "' + search_string + '"...');
-		
 		var found = false;
-		$('#form_data').children('tbody').children().hide()
+		$('#form_data').children('tbody').children(':not(#nodata)').hide()
 			.each(function() {
 				// date filter
 				var submitted_string = $(this).find('.time_col').text();
@@ -116,6 +117,7 @@ $(function() {
 				}
 				
 				if (!search_terms) {
+					found = true;
 					$(this).show();
 					return;
 				}
@@ -143,6 +145,8 @@ $(function() {
 			});
 		if (!found) {
 			$('#nodata').show();
+		} else {
+			$('#nodata').hide();
 		}
 	});
 	

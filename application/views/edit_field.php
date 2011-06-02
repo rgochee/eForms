@@ -16,7 +16,7 @@
 		<a class="up_arrow" href="#">&uarr;</a>
 		<a class="down_arrow" href="#">&darr;</a>
 	</div>
-	<a class="delete_btn" href="#">Delete Field</a>
+	<a class="delete_btn delete_field" href="#">Delete Field</a>
 	
 	<?php 
 		echo form_label('Help Text', 'description'.$index, array('class' => 'field_label')); 
@@ -41,11 +41,12 @@
 	
 	<?php echo form_error('fields['. $index .'][options][]'); ?>
 	<ul class="options">
+		<span class="field_help">Press 'Enter' after each option to add more.</span>
 		<?php $optionNum = max(array_count($fld_name.'[options][]'), 1); ?>
 		<?php for ($i=0; $i<$optionNum; $i++): ?>
 		<li>
 			<span class="dummy"></span>
-			<?php echo form_input($fld_name.'[options][]', set_value($fld_name.'[options][]'), 'size="50"'); ?>
+			<?php echo form_input($fld_name.'[options][]', set_value($fld_name.'[options][]'), 'class="val_opts" size="50"'); ?>
 			<a class="delete_btn" href="#">X</a>
 		</li>
 		<?php endfor; ?>

@@ -121,9 +121,10 @@ $(document).ready(function() {
 		e.preventDefault();
 		
 		var ul = $(this).parent();
-		var html = ul.children(':first').clone();
-		html.children('input').val("");
+		var html = $(this).prev().clone();
 		$(this).before(html);
+		html.children('input').val("")
+			.trigger('focus');
 	});
 	$('.delete_btn').live('click', function(e) {
 		e.preventDefault();
@@ -179,12 +180,21 @@ $(document).ready(function() {
 			break;
 		}
 	}).trigger('change');
+	
 	$('.field').live('focus', function() {
 		var fieldDiv = $(this);
 		
 		if (!fieldDiv.hasClass('editingField') && fieldDiv.attr('id') !== 'form_btns') {
 			$('.editingField').removeClass('editingField');
 			fieldDiv.addClass('editingField');
+		}
+	});
+	
+	const ENTER = 13;
+	$('.val_opts').live('keydown', function(e) {
+		if (e.keyCode === ENTER) {
+			e.preventDefault();
+			$(this).closest('.field').find('.add_option').trigger('click');
 		}
 	});
 	
@@ -232,7 +242,7 @@ $(document).ready(function() {
 		return false;
 	});
 <?php if ($action == Admin::EDIT): ?>
-	$('.delete_btn').live('click', function(e) {
+	$('.delete_field').live('click', function(e) {
 		var uri_match = /edit\/([0-9]+)\//.exec(window.location.pathname);
 		var form_id = uri_match[1];
 		var field_id = $(this).closest('.field').find('[name*="id"]').val();

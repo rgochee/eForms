@@ -95,9 +95,16 @@ class Forms extends EF_Controller {
 			$fields = $this->input->post('fields');
 			
 			// fool CI form validation to think form has been submitted
+			$_POST['validation'] = TRUE;
 			
 			foreach($form->fields as $field)
 			{
+				$input_name = 'fields['.$field->id.']';
+				if ($field->type === "checkbox")
+				{
+					$input_name .= '[]';
+				}
+				
 				//Adding rules for validation based on field attributes
 				$options = $field->options;
 				if ($field->required)
@@ -105,14 +112,7 @@ class Forms extends EF_Controller {
 					$options->addRule('required');
 				}
 				
-				
-				$input_name = 'fields['.$field->id.']';
-				if ($field->type === "checkbox")
-				{
-					$input_name .= '[]';
-				}
-				
-				if (isset($fields[$field->id]['value']) || $field->required)
+				if (isset($fields[$field->id]) || $field->required)
 				{
 					$this->form_validation->set_rules($input_name, $field->name, $options->getSerialized());
 				}

@@ -51,8 +51,9 @@ textarea { width: 400px; height: 65px; }
 
 .field { margin: 25px 0 10px; }
 .field_label { display: block; font-weight: bold; margin-top: 3px; }
-.field_required { display: block; font-weight: bold; color:#F00; text-decoration: underline }
-.field_help { display: block; }
+.field_required { display: block; font-weight: bold; color:#F00; text-decoration: underline; }
+.field_required:after { content: '*'; }
+.field_help { display: block; color: #555555; }
 .error { color: #FF5C00; vertical-align: top; clear: right; }
 .options, .validation { list-style: none; }
 .options li { padding: 2px; }

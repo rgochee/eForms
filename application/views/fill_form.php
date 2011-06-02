@@ -21,10 +21,11 @@
 	<?php echo form_error('fields['.$field->id.'][]'); // for checkbox ?>
 	
 	<?php if ($field->type == FieldTypes::CHECKBOX): ?>
+		<?php $values = set_values($inputName.'[]'); ?>
 		<?php foreach ($field->options->getValueOptions() as $option_id=>$option): ?>
 		<div class="subfield">
 		<?php 
-			echo form_checkbox($inputName.'[]', $option, set_value($inputName.'[]'), 
+			echo form_checkbox($inputName.'[]', $option, array_search($option, $values) !== FALSE, 
 				'id="fields'.$field->id."-".$option_id.'"');
 			echo form_label($option, 'fields'.$field->id."-".$option_id); 
 		?>
