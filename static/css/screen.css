@@ -3,6 +3,7 @@ body, div, h1, h2, h3, h4, ul, li { margin: 0; padding: 0; border: 0; font-size:
 body { position: absolute; width:100%; height: 100%; font-family: Verdana, Helvetica, Arial, sans-serif; }
 h2 { font-size: 25px; font-family: Georgia, Times, serif;  font-variant: small-caps; margin: 15px 0 10px; }
 h3 { font-size: 20px; font-family: Georgia, Times, serif; margin: 15px 0 10px; border-bottom: 1px solid #BFBE30; color: #A6A500; }
+textarea { width: 400px; height: 65px; } 
 
 #header, #content, #footer { width: 100%; }
 #header { height: 50px; background-color: #FFFFFF; overflow: hidden; position: absolute; } /*2E3884*/

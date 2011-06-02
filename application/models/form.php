@@ -203,14 +203,21 @@ class FieldOptions {
 }
 
 class FieldTypes  {
+
+	const TEXT = 'textbox';
+	const TEXTAREA = 'textarea';
+	const CHECKBOX = 'checkbox';
+	const RADIO = 'radio';
+	const DROPDOWN = 'dropdown';
+	const DATE = 'date';
 	
 	private static $types = array(
-		'textbox' => 'Text', 
-		'textarea' => 'Textarea',
-		'checkbox' => 'Checkbox', 
-		'radio' => 'Radio', 
-		'dropdown' => 'Dropdown list',
-		'date' => 'Date'
+		TEXT => 'Text', 
+		TEXTAREA => 'Textarea',
+		CHECKBOX => 'Checkbox', 
+		RADIO => 'Radio', 
+		DROPDOWN => 'Dropdown list',
+		DATE => 'Date'
 		);
 	
 	public static function getValues()
