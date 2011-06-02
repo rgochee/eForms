@@ -128,10 +128,14 @@ $(document).ready(function() {
 	$('.delete_btn').live('click', function(e) {
 		e.preventDefault();
 		
-		var li = $(this).parent();
-		var ul = li.parent();
-		if (ul.children('li').length > 1)
-			li.remove();
+		var r = confirm("Are you sure you want to delete?");
+		if (r == true)
+		{
+			var li = $(this).parent();
+			var ul = li.parent();
+			if (ul.children('li').length > 1)
+				li.remove();
+		}
 	});
 	$('.up_arrow').live('click', function(e) {
 		e.preventDefault();
