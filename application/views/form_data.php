@@ -25,6 +25,7 @@
 		<option><?php echo $field->name; ?></option>
 		<?php endforeach; ?>
 	</select>
+	<input type="submit" value="Search" />
 	<a href="#" id="options_toggle">More Options</a>
 	
 	<div id="more_options">
@@ -33,6 +34,8 @@
 		<input type="text" id="to_date" value="" size="10" />
 	</div>
 </form>
+
+<p id="search_info"></p>
 
 <table id="form_data" cellspacing="0">
 	<thead><tr>
@@ -53,9 +56,10 @@
 		<td class="time_col"><?php echo date('m/d/Y g:ia', $row['_time_submitted']); ?></td>
 	</tr>
 	<?php endforeach; ?>
+	<tr id="nodata" style="display: none;"><td colspan="<?php echo count($form->fields) + 1; ?>">No data</td></tr>
 	<?php else: ?>
-	<tr><td id="nodata" colspan="<?php echo count($form->fields) + 1; ?>">No data</td></tr>
-	<?php endif ?>
+	<tr id="nodata"><td colspan="<?php echo count($form->fields) + 1; ?>">No data</td></tr>
+	<?php endif; ?>
 	</tbody>
 </table>
 
@@ -85,7 +89,7 @@ $(function() {
 	$('#data_searcher').submit(function(e) {
 		e.preventDefault();
 		
-		var search_string = $('#data_search').val();
+		var search_string = $('#data_search').val().trim();
 		var search_terms;
 		// leave undefined if there are no search terms
 		if (search_string !== "") {
@@ -96,6 +100,9 @@ $(function() {
 		var fromDate = new Date($('#from_date').val()).getTime();
 		var toDate = new Date($('#to_date').val()).getTime();
 		
+		$('#search_info').text('Searching for "' + search_string + '"...');
+		
+		var found = false;
 		$('#form_data').children('tbody').children().hide()
 			.each(function() {
 				// date filter
@@ -123,20 +130,26 @@ $(function() {
 				
 				// search through said elements
 				for (var i in search_terms) {
-					if (search_terms[i] !== "" &&
-						contents.indexOf(search_terms[i]) != -1) {
-						$(this).show();
-						return;
+					if (search_terms[i] === "") {
+						continue;	 // skip searching for empty string
+					}
+					if (contents.indexOf(search_terms[i]) == -1) {
+						return;	// term is not found
 					}
 				}
+				// show only when ALL terms are found
+				found = true;
+				$(this).show();
 			});
+		if (!found) {
+			$('#nodata').show();
+		}
 	});
 	
 	// events triggering data update
 	const SPACE = 32;
-	const ENTER = 13;
 	$('#data_search').keyup(function(ev) {
-		if (ev.keyCode === SPACE || ev.keyCode === ENTER) {
+		if (ev.keyCode === SPACE) {
 			$('#data_searcher').trigger('submit');
 		}
 	});
