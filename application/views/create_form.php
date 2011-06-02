@@ -193,8 +193,9 @@ $(document).ready(function() {
 	});
 	$('.add_validation').live('click', function() {
 		var url = this.href;
-		var field_id = $(this).closest('.field').attr('id').substring(6);
-		var rulesStr = $(this).closest('.validation').find('input[type=hidden]').val();
+		var li = $(this).closest('.field');
+		var field_id = li.attr('id').substring(5);
+		var rulesStr = li.find('.validation input[type=hidden]').val();
 		var dialog = $('#validationDlg');
 		dialog.data('fid', field_id);
 		
@@ -215,7 +216,8 @@ $(document).ready(function() {
 		$.post(url, data, function(data) {
 			var validationResult = $.parseJSON(data);
 			var field_id = $('#validationDlg').data('fid');
-			var validationList = $('.validation:eq('+field_id+')')
+			var li = $('#field'+field_id);
+			var validationList = li.find('.validation')
 			validationList.find('.pretty_rules')
 					.text(validationResult['pretty']);
 			validationList.find('input[type=hidden]')
