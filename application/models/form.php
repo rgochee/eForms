@@ -212,12 +212,12 @@ class FieldTypes  {
 	const DATE = 'date';
 	
 	private static $types = array(
-		TEXT => 'Text', 
-		TEXTAREA => 'Textarea',
-		CHECKBOX => 'Checkbox', 
-		RADIO => 'Radio', 
-		DROPDOWN => 'Dropdown list',
-		DATE => 'Date'
+		self::TEXT => 'Text', 
+		self::TEXTAREA => 'Textarea',
+		self::CHECKBOX => 'Checkbox', 
+		self::RADIO => 'Radio', 
+		self::DROPDOWN => 'Dropdown list',
+		self::DATE => 'Date'
 		);
 	
 	public static function getValues()
