@@ -44,9 +44,9 @@ textarea { width: 400px; height: 65px; }
 #content { min-height: 100%; margin-bottom: -25px; }
 #content_inner { width: 800px; padding: 25px; margin: 0 auto; }
 
-#footer { color: #2E3884; }
+#footer { color: #666666; } /* 2E3884*/
 #footer a { color: inherit; }
-#footer_inner { width: 800px; height: 19px; margin: 5px auto 0; border-top: 1px solid #717DD7; }
+#footer_inner { width: 800px; height: 19px; margin: 5px auto 0; border-top: 1px solid #666666; } /*717DD7*/
 
 /* END HEADER/FOOTER SECTION */
 
