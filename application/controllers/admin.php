@@ -376,22 +376,27 @@ class Admin extends EF_Controller {
 		));
 	}
 
-	public function data($form_id)
+	public function data($form_id = -1)
 	{
-		$this->load->view('header');
-		
 		$this->load->library('FormsDB');
+		$this->load->library('form_validation');
+		
 		$result = $this->formsdb->getFilledData($form_id);
 		
 		if ($result === false)
 		{
+			$this->setTitle('Form Not Found');
+			$this->load->view('header');
 			$this->load->view('form_data', array('form'=>false));
+			$this->load->view('footer');
 		}
 		else
 		{	
 			$form = $result['form'];
 			$responses = $result['responses'];
 			
+			$this->setTitle('Form Data - ' . $form->name);
+			$this->load->view('header');
 			$this->load->view('form_data', array('form'=>$form, 'data'=>$responses));
 			$this->load->view('footer');
 		}

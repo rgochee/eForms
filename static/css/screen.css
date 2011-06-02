@@ -40,7 +40,7 @@ h3 { font-size: 20px; font-family: Georgia, Times, serif; margin: 15px 0 10px; b
 #toolbar form { margin-top: 4px; }
 
 #content { min-height: 100%; margin-bottom: -25px; }
-#content_inner { width: 800px; padding: 10px; margin: 0 auto; }
+#content_inner { width: 800px; padding: 25px; margin: 0 auto; }
 
 #footer { color: #2E3884; }
 #footer a { color: inherit; }
@@ -58,7 +58,8 @@ h3 { font-size: 20px; font-family: Georgia, Times, serif; margin: 15px 0 10px; b
 .dropdown { margin-top: 5px; }
 pre { font-family: Consolas, Lucida Console, Courier New, monospace; }
 
-#form_data .header { background-color: #FFFE73; cursor: pointer; font-weight: bold; padding: 5px 10px; color: #000;  }
+#form_data { min-width: 100%; }
+#form_data .header { background-color: #FFFE73; cursor: pointer; font-weight: bold; padding: 5px 10px; color: #000000;  }
 #form_data .header > .sortIcon { display: inline-block; background: url(../images/sort.png) no-repeat -28px 0; width: 10px; height: 9px; 
 	margin-left: 4px; } 
 #form_data .headerSortUp > .sortIcon { background-position: -50px 0; }
@@ -70,3 +71,5 @@ pre { font-family: Consolas, Lucida Console, Courier New, monospace; }
 .time_col { color: #777777; }
 #nodata { text-align: center; }
 
+/* jquery datepicker fix */
+#ui-datepicker-div { display: none; }

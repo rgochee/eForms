@@ -229,10 +229,9 @@ class FormsDB {
 		return false;
 	}
 	
-		function getFilledData($form_id)
+	function getFilledData($form_id)
 	{
 		$form = $this->getForm($form_id);
-
 		if ($form === false)
 		{
 			return false;
@@ -243,7 +242,10 @@ class FormsDB {
 		$responses = array();
 		foreach ($query->result() as $row)
 		{
-			$this->CI->db->from('Filled_Values')->join('Fields','Filled_Values.field_id = Fields.field_id')->where('instance_id', $row->instance_id)->order_by('field_order');
+			$this->CI->db->from('Filled_Values')
+				->join('Fields','Filled_Values.field_id = Fields.field_id')
+				->where('instance_id', $row->instance_id)
+				->order_by('field_order');
 			$subquery = $this->CI->db->get();
 			$response = array();
 			foreach ($subquery->result() as $filled_field)
