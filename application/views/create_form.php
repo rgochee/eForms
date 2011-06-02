@@ -67,10 +67,38 @@ $(document).ready(function() {
 			var orig = $(this);
 			var toCopy = to.clone(true);
 			var origCopy = orig.clone(true);
+			// switch indices
 			var toIndex = toCopy.find('.form_index input').val();
 			var origIndex = origCopy.find('.form_index input').val();
 			origCopy.find('.form_index input').val(toIndex);
 			toCopy.find('.form_index input').val(origIndex);
+			
+			// for some reason, some stuff isn't transferred properly...
+			var toHelptext = to.find('textarea').val();
+			var origHelptext = orig.find('textarea').val();
+			toCopy.find('textarea').val(toHelptext);
+			origCopy.find('textarea').val(origHelptext);
+			
+			var toOptSelect = to.find('.type_select option:selected').val();
+			var origOptSelect = orig.find('.type_select option:selected').val();
+			toOptions = toCopy.find('.type_select option');
+			for (var i = 0; i < toOptions.length; ++i)
+			{
+				if (toOptions[i].value == toOptSelect)
+				{
+					toOptions[i].selected = true;
+				}
+			}
+			origOptions = origCopy.find('.type_select option');
+			for (var i = 0; i < origOptions.length; ++i)
+			{
+				if (origOptions[i].value == origOptSelect)
+				{
+					origOptions[i].selected = true;
+				}
+			}
+			
+			// now, replace the fields
 			to.replaceWith(origCopy);
 			orig.replaceWith(toCopy);
 		});
