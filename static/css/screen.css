@@ -8,8 +8,8 @@ textarea { width: 400px; height: 65px; }
 #header, #content, #footer { width: 100%; }
 #header { height: 50px; background-color: #EFEFEF; overflow: hidden; position: absolute; } /*2E3884*/
 #logo { font-family: Georgia, Times, serif; font-size: 30px; /* width: 100px; min-height: 50px; /*padding: 8px 10px 5px 5px;*/ /*margin-left:50px; background-image: url("images/aero.gif"); background-attachment:left top; background-repeat:no-repeat;*/
-    text-shadow: #A80247 1px 1px 2px; } /*0/1472*/
-#logo img { width:50px; height:50px;float:left; margin-top:-3px; padding-right:5px;}
+    padding-top: 5px; text-shadow: #A80247 1px 1px 1px; } /*0/1472*/
+#logo img { width:50px; height:50px;float:left; margin-top:-8px; padding-right:5px;}
 #logo a { color: #A80247; text-decoration: none; display:block; margin-top:5px;} /*717DD7*/
 .left { float: left; display: inline-block; }
 .right { float: right; }

@@ -16,8 +16,10 @@
 
 <div id="header">
 	<h1 id="logo">
-	<img alt="AeroSpace Corp Logo" src="<?php echo base_url(); ?>static/css/images/aero.gif" />
-	<a href="<?php echo base_url(); ?>">eForms</a></h1>
+	<a href="<?php echo base_url(); ?>">
+	<img alt="AeroSpace Corp Logo" src="<?php echo base_url(); ?>static/css/images/aero.gif" /> eForms
+	</a>
+	</h1>
 </div>
 
 <div id="content">
