@@ -206,6 +206,7 @@ $(document).ready(function() {
 		autoOpen: false
 	});
 	$('.add_validation').live('click', function() {
+		var csrf_token = $("input[name=ci_csrf_token]").val();;
 		var url = this.href;
 		var li = $(this).closest('.field');
 		var field_id = li.attr('id').substring(5);
@@ -213,7 +214,7 @@ $(document).ready(function() {
 		var dialog = $('#validationDlg');
 		dialog.data('fid', field_id);
 		
-		dialog.load(url, {rules: rulesStr}, function() {
+		dialog.load(url, {rules: rulesStr, ci_csrf_token: csrf_token}, function() {
 			dialog.dialog('open');
 			$('#validation_type').trigger('change');
 		});
@@ -227,6 +228,7 @@ $(document).ready(function() {
 	$('#validation_form').live('submit', function() {
 		var url = $(this).attr('action');
 		var data = $(this).serialize();
+		
 		$.post(url, data, function(data) {
 			var validationResult = $.parseJSON(data);
 			var field_id = $('#validationDlg').data('fid');
