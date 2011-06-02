@@ -19,7 +19,7 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 </style>
 
 <h2><?php echo $action; ?> Form</h2>
-<form id="create_form" method="post">
+<?php echo form_open('', 'id="create_form"'); ?>
 	<?php if (isset($success) && $success): ?>
 		<p id="success_msg">Edit successful!</p>
 	<?php endif; ?>
