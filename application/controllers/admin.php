@@ -244,6 +244,32 @@ class Admin extends EF_Controller {
 		$this->load->view('footer');
 	}
 	
+	public function _paramedRulesCheck($pRules)
+	{
+		if($pRules['min_length'] != '' && $pRules['max_length'] != '')
+		{
+			$min = (int)$pRules['min_length'];
+			$max = (int)$pRules['max_length'];
+			if($min > $max)
+			{
+				$this->form_validation->set_message('_paramedRulesCheck', 'The minimum length cannot be greater than the maximum');
+				return false;
+			}
+		}
+		
+		if($pRules['less_than'] != '' && $pRules['greater_than'] != '')
+		{
+			$upper = (float)$pRules['less_than'];
+			$lower = (float)$pRules['greater_than'];
+			if($lower > $upper)
+			{
+				$this->form_validation->set_message('_paramedRulesCheck', 'The minimum value cannot be greater than the maximum');
+				return false;
+			}
+		}
+		return true;
+	}
+	
 	public function _collapseParamedRules($ruleNames)
 	{
 		$subRules = array();
@@ -286,17 +312,7 @@ class Admin extends EF_Controller {
 		// rules with 1 parameter
 		$paramedRules = array('min_length', 'max_length', 'greater_than', 'less_than', 'phone_format');
 		
-		// set rules
-		foreach ($paramedRules as $ruleName)
-		{
-			$this->form_validation->set_rules($ruleName, $ruleName, '');
-		}
-		$this->form_validation->set_rules('vtype', 'validation type', '');
-		$this->form_validation->set_rules('phone_format', 'character allowance/disallowance', '');
-		$this->form_validation->set_rules('chars', 'character allowance/disallowance', '');
-		$this->form_validation->set_rules('chars_spec', 'character allowance/disallowance', '');
-		
-		// parse validation rules
+		// parse validation rules, retrieve already submitted rules
 		if ($this->input->post('rules') !== FALSE) 
 		{
 			$rulesStr = $this->input->post('rules');
@@ -318,6 +334,34 @@ class Admin extends EF_Controller {
 				}
 			}
 		}
+		
+		$paramedRuleRules = array('min_length' => 'is_natural', 'max_length' => 'is_natural', 'greater_than' => 'numeric', 'less_than' => 'numeric', 'phone_format'=> '');
+		
+		// set rules
+		foreach ($paramedRules as $ruleName)
+		{
+			$ruleValue = $this->input->post($ruleName);
+			if ($ruleValue != '')
+			{
+				//If there is a value for the rule, ensure it's valid
+				$this->form_validation->set_rules($ruleName, $ruleName, $paramedRuleRules[$ruleName]);
+			}
+			else
+			{
+				//Rules are optional, so if has no value, don't check for additional rule
+				$this->form_validation->set_rules($ruleName, $ruleName, '');
+			}
+			
+			//Creating a special post field just for validation purposes
+			$_POST['paramedRules'][$ruleName] = $this->input->post($ruleName);
+		}
+		$this->form_validation->set_rules('vtype', 'validation type', '');
+		$this->form_validation->set_rules('phone_format', 'character allowance/disallowance', '');
+		$this->form_validation->set_rules('chars', 'character allowance/disallowance', '');
+		$this->form_validation->set_rules('chars_spec', 'character allowance/disallowance', '');
+		
+		//Checks relationships between rules, so need the array of rules as a parameter
+		$this->form_validation->set_rules('paramedRules', 'Rule parameters', 'callback__paramedRulesCheck');
 		
 		if ($this->form_validation->run() !== FALSE && $this->input->post('rules') === FALSE) 
 		{

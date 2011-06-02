@@ -11,6 +11,7 @@ li { margin: 2px; }
 <?php echo form_open('admin/validation', 'id="validation_form"'); ?>
 
 Leave fields empty for no validation
+<?php echo validation_errors(); ?>
 
 <ul id="validation_opts">
 <li>Length Validation

@@ -112,7 +112,7 @@ class Forms extends EF_Controller {
 					$options->addRule('required');
 				}
 				
-				if (isset($fields[$field->id]) || $field->required)
+				if ((isset($fields[$field->id]) && $fields[$field->id] != '') || $field->required)
 				{
 					$this->form_validation->set_rules($input_name, $field->name, $options->getSerialized());
 				}
