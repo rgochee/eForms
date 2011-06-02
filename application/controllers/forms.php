@@ -73,9 +73,9 @@ class Forms extends EF_Controller {
 
 	public function fill($form_id)
 	{
+		$this->load->library('form_validation');
 		$this->load->library('FormsDB');
 		$this->load->helper('form');
-		$this->load->library('form_validation');
 
 		$this->form_validation->set_error_delimiters('<div class="error">', '</div>');
 		
@@ -100,7 +100,7 @@ class Forms extends EF_Controller {
 			foreach($form->fields as $field)
 			{
 				$input_name = 'fields['.$field->id.']';
-				if ($field->type === "checkbox")
+				if ($field->type === FieldTypes::CHECKBOX)
 				{
 					$input_name .= '[]';
 				}
@@ -127,20 +127,23 @@ class Forms extends EF_Controller {
 			}
 			
 			$datas = array();
-			// validation->run may change post values. refresh.
-			$fields = $this->input->post('fields');
+			// validation->run may change post values. refresh $fields.
+			$fieldsPost = $this->input->post('fields');
 			foreach($form->fields as $field)
 			{
-				if (isset($fields[$field->id]))
+				if (isset($fieldsPost[$field->id]))
 				{
-					if (is_array($fields[$field->id]))
+					$value = $fieldsPost[$field->id];
+					
+					// checkbox and dropdown requires special handling
+					if (is_array($fieldsPost[$field->id]))
 					{
-						// need to use set_values
-						$value = Field::serializeValueArray($fields[$field->id]);
+						$value = Field::serializeValueArray($value);
 					}
-					else
+					else if ($field->type === FieldTypes::DROPDOWN)
 					{
-						$value = set_value('fields['.$field->id.']');
+						$options = $field->options->getValueOptions();
+						$value = $options[$value];
 					}
 				}
 				else

@@ -36,7 +36,7 @@
 		<?php foreach ($field->options->getValueOptions() as $option_id=>$option): ?>
 		<div class="subfield">
 		<?php 
-			echo form_radio($inputName, $option, set_value($inputName), 'id="fields'.$field->id."-".$option_id.'"');
+			echo form_radio($inputName, $option, $option == set_value($inputName), 'id="fields'.$field->id."-".$option_id.'"');
 			echo form_label($option, 'fields'.$field->id."-".$option_id); 
 		?>
 		</div>
