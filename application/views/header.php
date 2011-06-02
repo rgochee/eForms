@@ -4,6 +4,11 @@
 <head>
 <title><?php echo getTitle(); ?></title>
 
+<meta name="description" content="Web-based Form Management System" />
+<meta name="keywords" content="Aerospace, forms, form management" />
+<meta name="author" content="CS 130 eForms Team" />
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
 <link rel="stylesheet" href="<?php echo base_url(); ?>static/css/screen.css"/>
 
 </head>

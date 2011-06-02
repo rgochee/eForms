@@ -134,8 +134,9 @@ $(function() {
 	
 	// events triggering data update
 	const SPACE = 32;
+	const ENTER = 13;
 	$('#data_search').keyup(function(ev) {
-		if (ev.keyCode === SPACE) {
+		if (ev.keyCode === SPACE || ev.keyCode === ENTER) {
 			$('#data_searcher').trigger('submit');
 		}
 	});

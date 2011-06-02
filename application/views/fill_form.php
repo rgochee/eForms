@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/smoothness/jquery-ui.css" type="text/css" />
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
+
 <?php foreach ($form->fields as $field): ?>
 <div class="field">
 	<label for="fields<?php echo $field->id; ?>" class="field_label<?php if ($field->required) { echo ' field_required'; } ?>"><?php echo $field->name; ?></label>

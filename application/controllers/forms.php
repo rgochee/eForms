@@ -127,6 +127,8 @@ class Forms extends EF_Controller {
 			}
 			
 			$datas = array();
+			// validation->run may change post values. refresh.
+			$fields = $this->input->post('fields');
 			foreach($form->fields as $field)
 			{
 				if (isset($fields[$field->id]))
