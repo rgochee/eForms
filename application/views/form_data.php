@@ -21,8 +21,8 @@
 	<label for="col_names">in </label>
 	<select id="col_names" name="col_names">
 		<option value="-1" selected="selected">All fields</option>
-		<?php foreach ($form->fields as $field): ?>
-		<option><?php echo $field->name; ?></option>
+		<?php foreach ($form->fields as $index=>$field): ?>
+		<option value=".col<?php echo $index; ?>" ><?php echo $field->name; ?></option>
 		<?php endforeach; ?>
 	</select>
 	<input type="submit" value="Search" />
@@ -49,8 +49,10 @@
 	<?php if (!empty($data)): ?>
 	<?php foreach ($data as $row): ?>
 	<tr>
-		<?php foreach ($form->fields as $field): ?>
-		<td class="<?php echo $field->name; ?>"><?php echo tryPrint($row[$field->name], '&nbsp;'); ?></td>
+		<?php foreach ($form->fields as $index=>$field): ?>
+		<td class="col<?php echo $index; ?>">
+			<?php echo tryPrint($row[$field->name], '&nbsp;'); ?>
+		</td>
 		<?php endforeach; ?>
 		
 		<td class="time_col"><?php echo date('m/d/Y g:ia', $row['_time_submitted']); ?></td>
@@ -127,13 +129,13 @@ $(function() {
 				if (field == -1) {
 					contents = $(this).text().toLowerCase();
 				} else {
-					contents = $(this).find('.'+field).text().toLowerCase();
+					contents = $(this).find(field).text().toLowerCase();
 				}
 				
 				// search through said elements
 				for (var i in search_terms) {
 					if (search_terms[i] === "") {
-						continue;	 // skip searching for empty string
+						continue;	 // don't bother searching the empty string
 					}
 					if (contents.indexOf(search_terms[i]) == -1) {
 						return;	// term is not found
