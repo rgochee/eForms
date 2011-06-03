@@ -136,15 +136,10 @@ class Forms extends EF_Controller {
 				{
 					$value = $fieldsPost[$field->id];
 					
-					// checkbox and dropdown requires special handling
+					// checkbox requires special handling
 					if (is_array($fieldsPost[$field->id]))
 					{
 						$value = Field::serializeValueArray($value);
-					}
-					else if ($field->type === FieldTypes::DROPDOWN)
-					{
-						$options = $field->options->getValueOptions();
-						$value = $options[$value];
 					}
 				}
 				else

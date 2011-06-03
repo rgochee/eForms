@@ -55,7 +55,7 @@
 		</td>
 		<?php endforeach; ?>
 		
-		<td class="time_col"><?php echo date('m/d/Y g:ia', $row['_time_submitted']); ?></td>
+		<td class="time_col"><?php echo date('M j, Y g:i A', $row['_time_submitted']); ?></td>
 	</tr>
 	<?php endforeach; ?>
 	<tr id="nodata" style="display: none;"><td colspan="<?php echo count($form->fields) + 1; ?>">No data</td></tr>

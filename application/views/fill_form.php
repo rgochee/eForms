@@ -43,7 +43,13 @@
 		<?php endforeach; ?>
 		
 	<?php elseif ($field->type == FieldTypes::DROPDOWN): ?>
-		<?php echo form_dropdown($inputName, $field->options->getValueOptions(), set_value($inputName), 'id="fields'.$field->id.'"'); ?>
+		<?php 
+			$optionCopy = array();
+			foreach ($field->options->getValueOptions() as $option):
+				$optionCopy[$option] = $option;
+			endforeach;
+		?>
+		<?php echo form_dropdown($inputName, $optionCopy, set_value($inputName), 'id="fields'.$field->id.'"'); ?>
 		
 	<?php elseif ($field->type == FieldTypes::DATE): ?> 
 		<input type="text" id="datepicker<?php echo $field->id; ?>" class="date_field" size="50" />
