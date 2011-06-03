@@ -2,7 +2,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><?php echo getTitle(); ?></title>
+<title><?php echo get_title(); ?></title>
 
 <meta name="description" content="Web-based Form Management System" />
 <meta name="keywords" content="Aerospace, forms, form management" />

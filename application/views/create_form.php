@@ -24,7 +24,7 @@ textarea { font: 12px Verdana, Arial, Helvetica, sans-serif; height: 50px; }
 		<p id="success_msg">Edit successful!</p>
 	<?php endif; ?>
 	<?php if ($action == Admin::EDIT): ?>
-		<?php echo anchor(niceFormUri('forms/fill/', $form_id, $form_name), 'Go to form', 'title="View the form"'); ?>
+		<?php echo anchor(nice_form_uri('forms/fill/', $form_id, $form_name), 'Go to form', 'title="View the form"'); ?>
 	<?php endif; ?>
 
 	<div class="field editingField">

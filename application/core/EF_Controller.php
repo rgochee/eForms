@@ -22,5 +22,5 @@ class EF_Controller extends CI_Controller {
 	
 }
 
-/* End of file welcome.php */
-/* Location: ./application/controllers/admin.php */
+/* End of file EF_Controller.php */
+/* Location: ./application/core/EF_Controller.php */

@@ -19,13 +19,13 @@
 <?php if (!empty($forms)): ?>
 <?php foreach($forms as $form): ?>
 	<li class="form">
-		<?php echo anchor(niceFormUri('forms/fill/', $form->id, $form->name), $form->name, 'title="Fill form" class="form_link"'); ?>
+		<?php echo anchor(nice_form_uri('forms/fill/', $form->id, $form->name), $form->name, 'title="Fill form" class="form_link"'); ?>
 		<span class="last_mod">Last modified: <?php echo date('M d, Y', $form->time_created); ?></span>
 		
 		<div class="form_info">
 		<?php if($this->session->userdata('admin')): ?>
-		<?php echo anchor(niceFormUri('admin/edit/', $form->id, $form->name), 'edit', 'title="Edit the form"'); ?>
-		<?php echo anchor(niceFormUri('admin/data/', $form->id, $form->name), 'data', 'title="View form responses"'); ?>
+		<?php echo anchor(nice_form_uri('admin/edit/', $form->id, $form->name), 'edit', 'title="Edit the form"'); ?>
+		<?php echo anchor(nice_form_uri('admin/data/', $form->id, $form->name), 'data', 'title="View form responses"'); ?>
 		<?php endif ?>
 		</div>
 		

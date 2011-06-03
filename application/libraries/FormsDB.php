@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class FormsDB {
 	var $CI;
@@ -7,14 +7,14 @@ class FormsDB {
 	const SORT_NAME = 0x2;
 	const SHOW_DISABLED = 0x100;
 	
-	function __construct()
+	public function __construct()
 	{
 		$this->CI =& get_instance();
 		$this->CI->load->database();
 		$this->CI->load->model('form');
 	}
 	
-	function createForm($name, $description, $user, $fields)
+	public function createForm($name, $description, $user, $fields)
 	{
 		// insert form
 		$formData = array(
@@ -60,27 +60,27 @@ class FormsDB {
 		return $form_id;
 	}
 	
-	function deleteForm($form_id)
+	public function deleteForm($form_id)
 	{
 		$this->CI->db->delete('Forms', array('form_id' => $form_id));
 		$this->CI->db->delete('Fields', array('form_id' => $form_id));
 	}
 	
 	
-	function formExists($name)
+	public function formExists($name)
 	{
 		$this->CI->db->from('Forms')->where('form_name',$name)->limit(1);
 		$query = $this->CI->db->get();
 		return $query->num_rows() != 0;
 	}
 	
-	function getNumForms() 
+	public function getNumForms() 
 	{
 		$query = $this->CI->db->get('Forms');
 		return $query->num_rows(); 
 	}
 	
-	function getNumSearchForms($search_terms, $options = 0)
+	public function getNumSearchForms($search_terms, $options = 0)
 	{
 		$words = explode(' ', $search_terms);
 		foreach ($words as $word)
@@ -92,7 +92,7 @@ class FormsDB {
 	}
 	
 	// return value: Form object with form structure info
-	function getForm($form_id)
+	public function getForm($form_id)
 	{
 		// get form info
 		$this->CI->db->from('Forms')->where('form_id',$form_id)->limit(1);
@@ -139,7 +139,7 @@ class FormsDB {
 		return $form;
 	}
 	
-	function searchForm($search_terms, $limit = 20, $start = 0, $options = 0)
+	public function searchForm($search_terms, $limit = 20, $start = 0, $options = 0)
 	{
 		$words = explode(' ', $search_terms);
 		foreach ($words as $word)
@@ -150,7 +150,7 @@ class FormsDB {
 		return $this->getForms($limit, $start, $options);
 	}
 	
-	function handleOptions($options = 0)
+	public function handleOptions($options = 0)
 	{
 		if ($options & FormsDB::SORT_TIME)
 		{
@@ -168,7 +168,7 @@ class FormsDB {
 	}
 	
 	// return value: array of Form objects without form structure info
-	function getForms($limit = 20, $start = 0, $options = 0)
+	public function getForms($limit = 20, $start = 0, $options = 0)
 	{
 		// get form info
 		$this->CI->db->from('Forms')->limit($limit, $start);
@@ -206,7 +206,7 @@ class FormsDB {
 	//               values = array of field_name => value pairs
 	// postcontidion: form instance added to database
 	// return value: instance_id
-	function addFilledForm($form_id, $user, $values)
+	public function addFilledForm($form_id, $user, $values)
 	{
 		// insert form instance
 		$instanceData = array(
@@ -231,7 +231,7 @@ class FormsDB {
 		return $instance_id;
 	}
 	
-	function getFilledForm($instance_id)
+	public function getFilledForm($instance_id)
 	{
 		/*
 		$this->db->form('Filled_Forms')->join('Forms', 'Forms.form_id = Filled_Forms.form_id')->join('Fields', 'Fields.form_id = Forms.form_id')->join('Filled_Values')->where('Fields.field_id = Filled_Values.field_id AND Filled_Forms.instance_id = Filled_Values.instance_id');
@@ -239,12 +239,12 @@ class FormsDB {
 		return false;
 	}
 	
-	function editFilledForm($instance_id)
+	public function editFilledForm($instance_id)
 	{
 		return false;
 	}
 	
-	function getFilledData($form_id)
+	public function getFilledData($form_id)
 	{
 		$form = $this->getForm($form_id);
 		if ($form === false)
@@ -273,7 +273,7 @@ class FormsDB {
 		return array('form' => $form, 'responses' => $responses);
 	}
 	
-	function disableField($form_id, $field_id)
+	public function disableField($form_id, $field_id)
 	{
 		$this->CI->db->select('field_name, field_order')->where(array('form_id' => $form_id, 'field_id' => $field_id));
 		$query = $this->CI->db->get('Fields');
@@ -306,7 +306,7 @@ class FormsDB {
 		return $field->field_name;
 	}
 	
-	function editForm($form_id, $name, $description)
+	public function editForm($form_id, $name, $description)
 	{
 		$update = array(
 			'form_name' => $name,
@@ -324,7 +324,7 @@ class FormsDB {
 		return $this->CI->db->affected_rows();
 	}
 	
-	function editField($form_id, $field_id, $field)
+	public function editField($form_id, $field_id, $field)
 	{
 		$field = array(
 			'field_name' => $field->name,
@@ -348,7 +348,7 @@ class FormsDB {
 		return $this->CI->db->affected_rows();
 	}
 	
-	function addField($form_id, $field, $order = -1)
+	public function addField($form_id, $field, $order = -1)
 	{
 		// get number of fields in the form to determine order
 		$this->CI->db->from('Fields')->where('form_id', $form_id);
@@ -379,7 +379,7 @@ class FormsDB {
 		return $field_id;
 	}
 	
-	function moveFieldOrder($form_id, $field_id, $newOrder)
+	public function moveFieldOrder($form_id, $field_id, $newOrder)
 	{
 		$this->CI->db->from('Fields')->where('field_id', $field_id);
 		$query = $this->CI->db->get();
@@ -440,4 +440,5 @@ class FormsDB {
 	}
 }
 
-?>
+/* End of file FormsDB.php */
+/* Location: ./application/libraries/FormsDB.php */

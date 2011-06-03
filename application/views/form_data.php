@@ -13,7 +13,7 @@
 
 <h2>"<?php echo $form->name; ?>" Data</h2>
 
-<p><?php echo anchor(niceFormUri('forms/fill/', $form->id, $form->name), "Go to form", 'title="View the form"'); ?></p>
+<p><?php echo anchor(nice_form_uri('forms/fill/', $form->id, $form->name), "Go to form", 'title="View the form"'); ?></p>
 
 <form id="data_searcher" method="GET">
 	<label for="data_search">Search for </label>
@@ -51,7 +51,7 @@
 	<tr>
 		<?php foreach ($form->fields as $index=>$field): ?>
 		<td class="col<?php echo $index; ?>">
-			<?php echo tryPrint($row[$field->name], '&nbsp;'); ?>
+			<?php echo set_text($row[$field->name], '&nbsp;'); ?>
 		</td>
 		<?php endforeach; ?>
 		

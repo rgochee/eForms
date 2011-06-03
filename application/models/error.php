@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 define('ERROR_UNKNOWN', -1);
 define('ERROR_DUPLICATE', -2);
@@ -9,4 +9,5 @@ class Error {
 	var $message;
 }
 
-?>
+/* End of file error.php */
+/* Location: ./application/models/error.php */

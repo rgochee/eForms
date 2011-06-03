@@ -1,9 +1,8 @@
-<?php
-
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class EF_Form_validation extends CI_Form_validation {
 
-	function array_count($field)
+	public function array_count($field)
 	{
 		if (isset($this->_field_data[$field]) && is_array($this->_field_data[$field]['postdata']))
 		{
@@ -15,7 +14,7 @@ class EF_Form_validation extends CI_Form_validation {
 		}
 	}
 	
-	function set_values($field)
+	public function set_values($field)
 	{
 		if (isset($this->_field_data[$field]) && is_array($this->_field_data[$field]['postdata']))
 		{
@@ -27,14 +26,14 @@ class EF_Form_validation extends CI_Form_validation {
 		}
 	}
 	
-	function valid_values($val, $validValues)
+	public function valid_values($val, $validValues)
 	{
 		$this->set_message('valid_values', $val . ' is an invalid value for %s.');
 		$validValuesArray = Field::deserializeValueString($validValues);
 		return array_search($val, $validValuesArray) !== FALSE;
 	}
 	
-	function phone_format($val, $format)
+	public function phone_format($val, $format)
 	{
 		$phoneFormats = array('1 (123) 456-7890', '1 123 456 7890', '1-123-456-7890', '11234567890');
 		
@@ -90,3 +89,6 @@ class EF_Form_validation extends CI_Form_validation {
 	}
 
 }
+
+/* End of file EF_Form_validation.php */
+/* Location: ./application/libraries/EF_Form_validation.php */

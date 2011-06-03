@@ -1,4 +1,4 @@
-<?php
+<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 define('RULE_SEPARATOR', '|');
 define('OPT_SEPARATOR', '``');
@@ -241,4 +241,5 @@ class FieldTypes  {
 	}
 }
 
-?>
+/* End of file form.php */
+/* Location: ./application/models/form.php */
