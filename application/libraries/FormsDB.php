@@ -80,6 +80,17 @@ class FormsDB {
 		return $query->num_rows(); 
 	}
 	
+	function getNumSearchForms($search_terms, $options = 0)
+	{
+		$words = explode(' ', $search_terms);
+		foreach ($words as $word)
+		{
+			$this->CI->db->or_like('form_name', $word); 
+		}
+		$this->handleOptions($options);
+		return $this->getNumForms();
+	}
+	
 	// return value: Form object with form structure info
 	function getForm($form_id)
 	{
@@ -139,13 +150,8 @@ class FormsDB {
 		return $this->getForms($limit, $start, $options);
 	}
 	
-	// return value: array of Form objects without form structure info
-	function getForms($limit = 20, $start = 0, $options = 0)
+	function handleOptions($options = 0)
 	{
-		// get form info
-		$this->CI->db->from('Forms')->limit($limit, $start);
-		
-		// handle options
 		if ($options & FormsDB::SORT_TIME)
 		{
 			$this->CI->db->order_by('time_created', 'desc');
@@ -159,8 +165,17 @@ class FormsDB {
 		{
 			$this->CI->db->where('form_disabled', 0);
 		}
+	}
+	
+	// return value: array of Form objects without form structure info
+	function getForms($limit = 20, $start = 0, $options = 0)
+	{
+		// get form info
+		$this->CI->db->from('Forms')->limit($limit, $start);
 		
-		// note: may want to use `form_disabled` as applicable
+		// handle options
+		$this->handleOptions($options);
+		
 		$query = $this->CI->db->get();
 		
 		if ($query->num_rows() === 0)
