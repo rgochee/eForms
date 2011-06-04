@@ -8,6 +8,7 @@ li { margin: 2px; }
 .selected_opts { display: block; }
 </style>
 
+<?php /* This file allows for different validation rules for different fields */ ?>
 <?php echo form_open('admin/validation', 'id="validation_form"'); ?>
 
 Leave fields empty for no validation
@@ -27,6 +28,7 @@ Leave fields empty for no validation
 <li>Validation type:
 	<?php echo form_dropdown('vtype', $validationTypes, set_value('vtype'), 'id="validation_type"'); ?>
 	
+        <?php /* For characters, it lets the user choose to disallow certain characters, or allow only certain ones */ ?>
 	<ul id="char_opts" class="type_opts">
 		<li>
 			<?php echo form_radio('chars', 'disallow', 'disallow' === set_value('chars'), 'id="disallow"'); ?>
@@ -37,6 +39,7 @@ Leave fields empty for no validation
 
 		<li><?php echo form_input('char_spec', set_value('char_spec')); ?> (List characters separated by space)</li>
 	</ul>
+        <?php /* Set a range for an integer value with min and max values */ ?>
 	<ul id="integer_opts" class="type_opts">
 		<li>
 			Range: 
@@ -44,6 +47,7 @@ Leave fields empty for no validation
 			<?php echo form_input('less_than', set_value('less_than'), 'size="3"'); ?>
 		</li>
 	</ul>
+        <?php /* A phone number can be set in 3 different formats */ ?>
 	<ul id="phone_format_opts" class="type_opts" style="font: 10pt Courier New, monospace;" >
 		Store in database as:
 		<?php foreach ($phoneFormats as $i=>$format): ?>
