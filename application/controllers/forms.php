@@ -1,14 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Forms extends EF_Controller {
-
+        /* Constructor for the user controller; loads up url and text helpers from CodeIgniter */
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('session');
 		$this->load->helper('text');
 		$this->load->helper('url');
 	}
-	
+	/* Sets the homepage attributes. Loads the header, footer, title, and updated news */
 	public function index()
 	{
 		$this->setTitle('Index');
@@ -20,6 +20,7 @@ class Forms extends EF_Controller {
 		$this->load->view('footer');
 	}
 	
+        /* This is called from forms_list. It displays all the forms sorted by creation dare */
 	public function browse($start = 0)
 	{
 		$per_page = 20;
@@ -40,6 +41,7 @@ class Forms extends EF_Controller {
 		$this->load->view('footer');
 	}
 
+        /* Allows for searching through forms via header*/
 	public function search($start = 0)
 	{
 		$per_page = 20;
@@ -72,6 +74,7 @@ class Forms extends EF_Controller {
 		$this->load->view('footer');
 	}
 
+        /* Helps fill out forms by loading up the saved form. */
 	public function fill($form_id)
 	{
 		$this->load->library('form_validation');
