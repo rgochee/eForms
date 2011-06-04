@@ -13,7 +13,19 @@ class FormsDB {
 		$this->CI->load->database();
 		$this->CI->load->model('form');
 	}
-	
+
+	/**
+	* FormsDB::createForm
+	*
+	* Adds new form
+	*
+	* @access public
+	* @Param string - Name of new form
+	* @Param string - Description for new form
+	* @Param string - Name of user who submitted new form
+	* @Param Fields[] - array of field structs for new form
+	* @Return FALSE or new form id
+	*/	
 	public function createForm($name, $description, $user, $fields)
 	{
 		// insert form
@@ -60,13 +72,30 @@ class FormsDB {
 		return $form_id;
 	}
 	
+	/**
+	* FormsDB::deleteForm
+	*
+	* Deletes form (and related fields) from database. (Shouldn't actually be called... we don't delete forms)
+	*
+	* @access public
+	* @Param int - form ID to delete
+	* @Return void
+	*/	
 	public function deleteForm($form_id)
 	{
 		$this->CI->db->delete('Forms', array('form_id' => $form_id));
 		$this->CI->db->delete('Fields', array('form_id' => $form_id));
 	}
 	
-	
+	/**
+	* FormsDB::formExists
+	*
+	* Checks if a form with the given name exists
+	*
+	* @access public
+	* @Param string - name to check
+	* @Return bool
+	*/	
 	public function formExists($name)
 	{
 		$this->CI->db->from('Forms')->where('form_name',$name)->limit(1);
@@ -74,12 +103,30 @@ class FormsDB {
 		return $query->num_rows() != 0;
 	}
 	
+	/**
+	* FormsDB::getNumForms
+	*
+	* Returns number of forms in database
+	*
+	* @access public
+	* @Return int
+	*/	
 	public function getNumForms() 
 	{
 		$query = $this->CI->db->get('Forms');
 		return $query->num_rows(); 
 	}
 	
+	/**
+	* FormsDB::getNumSearchForms
+	*
+	* Returns number of forms in database according to given filter
+	*
+	* @access public
+	* @Param string - search terms
+	* @Param int - bitwise flags for form filters
+	* @Return int
+	*/	
 	public function getNumSearchForms($search_terms, $options = 0)
 	{
 		$words = explode(' ', $search_terms);
@@ -91,7 +138,15 @@ class FormsDB {
 		return $this->getNumForms();
 	}
 	
-	// return value: Form object with form structure info
+	/**
+	* FormsDB::getForm
+	*
+	* Returns structure of specified form
+	*
+	* @access public
+	* @Param int - ID of form to get structure of
+	* @Return Form
+	*/	
 	public function getForm($form_id)
 	{
 		// get form info
@@ -139,6 +194,18 @@ class FormsDB {
 		return $form;
 	}
 	
+	/**
+	* FormsDB::searchForm
+	*
+	* returns list of forms according to given filter
+	*
+	* @access public
+	* @Param string - search terms
+	* @Param int - number of forms to return
+	* @Param int - start position of forms to return
+	* @Param int - bitwise flags for form filters
+	* @Return Form[]
+	*/	
 	public function searchForm($search_terms, $limit = 20, $start = 0, $options = 0)
 	{
 		$words = explode(' ', $search_terms);
@@ -150,6 +217,15 @@ class FormsDB {
 		return $this->getForms($limit, $start, $options);
 	}
 	
+	/**
+	* FormsDB::getForm
+	*
+	* Returns structure of specified form
+	*
+	* @access public
+	* @Param int - ID of form to get structure of
+	* @Return Form
+	*/	
 	public function handleOptions($options = 0)
 	{
 		if ($options & FormsDB::SORT_TIME)
@@ -167,7 +243,17 @@ class FormsDB {
 		}
 	}
 	
-	// return value: array of Form objects without form structure info
+	/**
+	* FormsDB::getForms
+	*
+	* returns list of forms
+	*
+	* @access public
+	* @Param int - number of forms to return
+	* @Param int - start position of forms to return
+	* @Param int - bitwise flags for form filters
+	* @Return Form[]
+	*/
 	public function getForms($limit = 20, $start = 0, $options = 0)
 	{
 		// get form info
@@ -202,10 +288,17 @@ class FormsDB {
 		return $return;
 	}
 	
-	// precondition: form_id = form id
-	//               values = array of field_name => value pairs
-	// postcontidion: form instance added to database
-	// return value: instance_id
+	/**
+	* FormsDB::addFilledForm
+	*
+	* add filled out form to database
+	*
+	* @access public
+	* @Param int - id of form that was filled out
+	* @Param string - user who submitted form
+	* @Param array(string => mixed) - values of submitted data
+	* @Return int - instance ID of new filled form
+	*/
 	public function addFilledForm($form_id, $user, $values)
 	{
 		// insert form instance
@@ -231,6 +324,15 @@ class FormsDB {
 		return $instance_id;
 	}
 	
+	/**
+	* FormsDB::getFilledForm
+	*
+	* get filled out form from database
+	*
+	* @access public
+	* @Param int - id of filled form to get
+	* @Return Form - struct containing relevant filled form data
+	*/
 	public function getFilledForm($instance_id)
 	{
 		/*
@@ -239,11 +341,30 @@ class FormsDB {
 		return false;
 	}
 	
-	public function editFilledForm($instance_id)
+	/**
+	* FormsDB::editFilledForm
+	*
+	* edit filled out form from database
+	*
+	* @access public
+	* @Param int - id of filled form to edit
+	* @Param array(string => mixed) - values of submitted data
+	* @Return bool
+	*/
+	public function editFilledForm($instance_id, $values)
 	{
 		return false;
 	}
 	
+	/**
+	* FormsDB::getFilledData
+	*
+	* get list of data of filled out forms
+	*
+	* @access public
+	* @Param int - id of form to recall data
+	* @Return FALSE or tuple (Form, array(string => mixed))
+	*/
 	public function getFilledData($form_id)
 	{
 		$form = $this->getForm($form_id);
@@ -273,6 +394,16 @@ class FormsDB {
 		return array('form' => $form, 'responses' => $responses);
 	}
 	
+	/**
+	* FormsDB::disableField
+	*
+	* disable one field
+	*
+	* @access public
+	* @Param int - id of form containing field
+	* @Param int - id of field to disable
+	* @Return FALSE or field name of field disabled
+	*/
 	public function disableField($form_id, $field_id)
 	{
 		$this->CI->db->select('field_name, field_order')->where(array('form_id' => $form_id, 'field_id' => $field_id));
@@ -306,6 +437,17 @@ class FormsDB {
 		return $field->field_name;
 	}
 	
+	/**
+	* FormsDB::editForm
+	*
+	* edit name or description of form
+	*
+	* @access public
+	* @Param int - id of form to modify
+	* @Param string - new form name
+	* @Param string - new form description
+	* @Return bool
+	*/
 	public function editForm($form_id, $name, $description)
 	{
 		$update = array(
@@ -324,6 +466,17 @@ class FormsDB {
 		return $this->CI->db->affected_rows();
 	}
 	
+	/**
+	* FormsDB::editForm
+	*
+	* edit specified field information
+	*
+	* @access public
+	* @Param int - id of form containing field
+	* @Param int - id of field to modify
+	* @Param Field - struct of new field data
+	* @Return bool
+	*/
 	public function editField($form_id, $field_id, $field)
 	{
 		$field = array(
@@ -348,6 +501,17 @@ class FormsDB {
 		return $this->CI->db->affected_rows();
 	}
 	
+	/**
+	* FormsDB::addField
+	*
+	* add field to a form
+	*
+	* @access public
+	* @Param int - id of form to add to
+	* @Param Field - struct of field to add
+	* @Param int - index/order in Form
+	* @Return FALSE or int - ID of new field
+	*/
 	public function addField($form_id, $field, $order = -1)
 	{
 		// get number of fields in the form to determine order
@@ -379,6 +543,17 @@ class FormsDB {
 		return $field_id;
 	}
 	
+	/**
+	* FormsDB::moveFieldOrder
+	*
+	* change order of fields in a form
+	*
+	* @access public
+	* @Param int - id of form to edit field order
+	* @Param int - id of field to move
+	* @Param int - new index/order in Form
+	* @Return int
+	*/
 	public function moveFieldOrder($form_id, $field_id, $newOrder)
 	{
 		$this->CI->db->from('Fields')->where('field_id', $field_id);
@@ -432,6 +607,15 @@ class FormsDB {
 		return $numShifted + $fieldMoved;
 	}
 	
+	/**
+	* FormsDB::_logDbError
+	*
+	* add message to log (with timestamp)
+	*
+	* @access private
+	* @Param string - message to add
+	* @Return void
+	*/
 	private function _logDbError($message)
 	{
 		$errorMsg = $message . ' on "' . $this->CI->db->last_query() . '"';
