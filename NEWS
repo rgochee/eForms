@@ -1,14 +1,62 @@
 
-* Changes in eForms 0.5
+* Changes in eForms 1.0
+
+** Bug Fixes
+	Pagination when searching forms
+	
+** New Features
+	CSRF protection
+	Validation when specifying validation
+
+	
+* Changes in eForms 0.9
+
+** Bug Fixes
+	Fixed buggy field ordering
+	Revamped UI
+
+** New Features
+	Field reordering when editing forms
+	Forms are now searchable
+	Form response data are now searchable
+	UTF-8 support
+
+	
+* Changes in eForms 0.8
+
+** Bug Fixes
+	Fixed a bug for form URLs with nonpermitted characters
+
+** New Features
+	Paging in Browse Forms
+	Inserting, editing and deleting fields
+	Ability to sort form response data
+	Ability to specify validation rules
+
+
+* Changes in eForms 0.7
+
+** Bug Fixes
+	Better handling of creating forms with duplicate name 
+	Checkbox validation now works
+
+** New Features
+	Validation for Create Form
+	Support for date field and textarea
+	Install script
+
+	
+* Changes in eForms 0.6
 
 ** Bug Fixes
 	Creating and filling fields work for field types: textbox, checkbox, radio, dropdown list.
 
 ** New Features
-	Added functionality for viewing form data
-	Added field help text
+	Functionality for viewing form data
+	Field help text
 
-* Changes in eForms 0.4
+	
+* Changes in eForms 0.5
 
 ** Bug Fixes
 	Created forms are actually saved on the database
