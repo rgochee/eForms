@@ -14,6 +14,7 @@
 </head>
 <body>
 
+<?php /* Adds the title 'eForms' and the logo for the Aerospace Corporation */ ?>  
 <div id="header">
 	<h1 id="logo">
 	<a href="<?php echo base_url(); ?>">
@@ -22,6 +23,7 @@
 	</h1>
 </div>
 
+<?php /* Adds the Home and Browse Buttons. If its a user, the Create button appears */ ?>
 <div id="content">
 	<div id="toolbar">
 		<div id="menubar" class="left">
@@ -35,6 +37,7 @@
 		</ul>
 		</div>
 		
+                <?php /* Adds a search feature to the far right of the header */ ?>
 		<div class="right">
 			<form id="search_form" action="<?php echo base_url(); ?>forms/search" method="get">
 				<input type="text" name="find" value="" size="30">
