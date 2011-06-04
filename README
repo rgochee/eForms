@@ -1,0 +1,29 @@
+
+eForms is a web-based form management system that allows large organizations
+to reduce the hassle of paper forms. eForms provides a centralized system
+for managing and handling hundreds of forms.
+
+
+System Requirements
+- CodeIgniter 2.0.2 (included in the project package)
+- PHP version 5.1.6 or newer (required for CodeIgniter)
+- Database server (tested with MySQL 4.1+)
+
+
+Download
+
+This project is available for download from its github repository.
+	https://github.com/rgochee/eForms
+
+
+Installation Instructions
+
+1. Unzip the package downloaded from the github repository.
+2. Copy the files and folders to the directory of choice on your server.
+   More detailed instructions for installing a CodeIgniter project is
+   available on user_guide/installation/index.html.
+3. Use your browser to access install.php and fill the form with
+   the appropriate settings for your database.
+4. Delete install.php to prevent abuse.
+5. eForms should be good to go.
+
